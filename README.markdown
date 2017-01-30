@@ -1,4 +1,7 @@
-## Curriculum:
+## Overview
+For this course we will read the book "Kotlin for Android developers" and learn Kotlin while developing the Android app from the book. When done reading the book, we will do a project creating another Android app using e-conomic data. All code should be saved in this repository through pull request, that are reviewed by developers in the mobile team.
+
+## Curriculum
 
 - Kotlin
     - be able to explain 
