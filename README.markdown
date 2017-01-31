@@ -12,12 +12,17 @@ For this course we will read the book "Kotlin for Android developers" and learn 
         - scope
         - lambdas
         - extensions
-        - optionales
+        - function extensions
+        - companion objects
+        - optionals
         - constants
         - variables
         - generics
         - enum
         - exceptions
+        - unit tests
+        - delegate properties
+        - lateinit
         - converting Java to Kotlin
         - functional programming in Kotlin
         - using the REPL 
@@ -39,11 +44,12 @@ For this course we will read the book "Kotlin for Android developers" and learn 
 - BroadcastReceivers
 - SharedPreferences
 - Unit testing
+- RecyclerView
 - Networking
     - be able to perform HTTP requests using OkHTTP
 - 3rd party
     - be able to use anko
-    - be able to "insert a few other cool libs from GitHub here"
+    - be able to "insert a few other cool libs here"
 
 ## Project
 We build an Andoird app using the [e-conomic REST API](https://restapi.e-conomic.com/). The API documentation can be found [here](http://restdocs.e-conomic.com/). The app will be a light version of our [existing invoicing app](https://github.com/e-conomic/econ-android-sales/) for Android, that can edit a subset of the data on draft invoices.
