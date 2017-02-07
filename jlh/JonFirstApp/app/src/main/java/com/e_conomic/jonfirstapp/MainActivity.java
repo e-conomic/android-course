@@ -20,7 +20,7 @@ public class MainActivity extends AppCompatActivity {
     /** Called when the user clicks the Send button */
     public void sendMessage(View view) {
         // Create intent.
-        Intent intent = new Intent(this, DisplayMessageActivity);
+        Intent intent = new Intent(this, DisplayMessageActivity.class);
 
         // Add (user) entered message to the created intent.
         EditText editText = (EditText) findViewById(R.id.edit_message);
