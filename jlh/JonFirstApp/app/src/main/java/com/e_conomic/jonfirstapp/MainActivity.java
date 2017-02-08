@@ -9,7 +9,7 @@ import android.widget.EditText;
 public class MainActivity extends AppCompatActivity {
 
     // Key for the intent extra holding the message.
-    public final static String EXTRA_MESSAGE = "com.e-conomic.jonfirstapp.MESSAGE";
+    public final static String EXTRA_MESSAGE = "com.e_conomic.jonfirstapp.MESSAGE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
