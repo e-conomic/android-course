@@ -11,10 +11,14 @@ public class MainActivity extends AppCompatActivity {
     // Key for the intent extra holding the message.
     public final static String EXTRA_MESSAGE = "com.e_conomic.jonfirstapp.MESSAGE";
 
+    // Used to hold the reference to the text field containing the message to be written.
+    private EditText editText = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        editText = (EditText) findViewById(R.id.edit_message);
     }
 
     /** Called when the user clicks the Send button */
@@ -23,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, DisplayMessageActivity.class);
 
         // Add (user) entered message to the created intent.
-        EditText editText = (EditText) findViewById(R.id.edit_message);
         String message = editText.getText().toString();
         intent.putExtra(EXTRA_MESSAGE, message);
 
