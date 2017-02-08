@@ -8,12 +8,26 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- Hello world text view -->
-    <TextView android:id="@+id/hello_world"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="40sp"
-        android:text="@string/hello_world"/>
+        android:orientation="horizontal">
+
+        <!-- Hello world text view -->
+        <TextView android:id="@+id/hello_world"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.9"
+            android:textSize="40sp"
+            android:text="@string/hello_world"/>
+
+        <!-- Country picture -->
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.1"
+            android:src="@mipmap/country_flag"/>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
