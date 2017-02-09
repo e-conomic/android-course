@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Jons Første App</string>
+    <string name="edit_message">Skriv en besked</string>
+    <string name="button_send">Send</string>
+    <string name="hello_world">Hej Verden!</string>
+</resources>
