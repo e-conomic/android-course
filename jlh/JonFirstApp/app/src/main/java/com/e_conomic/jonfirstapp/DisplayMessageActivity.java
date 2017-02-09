@@ -10,7 +10,7 @@ public class DisplayMessageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_display_message);
+        setContentView(R.layout.display_message);
 
         // Grab the intent that started this activity.
         Intent intent = getIntent();

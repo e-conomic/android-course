@@ -1,6 +1,7 @@
 package com.e_conomic.jonfirstapp;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -35,7 +36,8 @@ public class MainActivity extends FragmentActivity {
         String message = editText.getText().toString();
 
         // If orientation is in landscape add message to fragment.
-        if (getResources().getBoolean(R.bool.is_landscape)) {
+        if (getResources().getConfiguration().orientation ==
+                Configuration.ORIENTATION_LANDSCAPE) {
 
             // Get the fragment that shows the message.
             FragmentManager fragmentManager = getSupportFragmentManager();
