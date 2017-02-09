@@ -40,9 +40,11 @@ public class MainActivity extends FragmentActivity {
                 Configuration.ORIENTATION_LANDSCAPE) {
 
             // Get the fragment that shows the message.
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            display_message_fragment =
-                    fragmentManager.findFragmentById(R.id.displaymessage_fragment);
+            if (display_message_fragment == null) {
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                display_message_fragment =
+                        fragmentManager.findFragmentById(R.id.displaymessage_fragment);
+            }
 
             // Edit the text view (show written message).
             TextView textView = (TextView)
