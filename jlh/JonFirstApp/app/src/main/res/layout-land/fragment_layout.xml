@@ -9,12 +9,11 @@
         android:layout_height="match_parent">
 
     </fragment>
-    <fragment android:name="com.e_conomic.jonfirstapp.DisplayMessageFragment"
-        android:id="@+id/displaymessage_fragment"
-        android:layout_weight="0.5"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <FrameLayout
+        android:id="@+id/land_fragment_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
-    </fragment>
+    </FrameLayout>
 
 </LinearLayout>

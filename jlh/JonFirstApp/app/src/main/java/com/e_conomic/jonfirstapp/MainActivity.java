@@ -27,6 +27,7 @@ public class MainActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fragment_layout);
         editText = (EditText) findViewById(R.id.edit_message);
+
     }
 
     /** Called when the user clicks the Send button */
@@ -35,34 +36,36 @@ public class MainActivity extends FragmentActivity {
         // The message entered by the user.
         String message = editText.getText().toString();
 
-        // If orientation is in landscape add message to fragment.
-        if (getResources().getConfiguration().orientation ==
-                Configuration.ORIENTATION_LANDSCAPE) {
+        // Create intent.
+        Intent intent = new Intent(this, DisplayMessageActivity.class);
 
-            // Get the fragment that shows the message.
-            if (display_message_fragment == null) {
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                display_message_fragment =
-                        fragmentManager.findFragmentById(R.id.displaymessage_fragment);
+        // Add (user) entered message to the created intent.
+        intent.putExtra(EXTRA_MESSAGE, message);
+
+        // Start an instance of the DisplayMessageActivity specified by the intent.
+        startActivity(intent);
+
+
+    }
+
+    /** Called when the user clicks the show/hide button */
+    public void showHide(View view) {
+
+        // Check that the correct layout is used.
+        if (findViewById(R.id.land_fragment_container) != null) {
+            // Create and add Fragment
+            display_message_fragment = new DisplayMessageFragment();
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.land_fragment_container, display_message_fragment).commitNow();
+
+            //Edit the text view (show written message).
+            if (display_message_fragment != null) {
+                TextView textView = (TextView)
+                        // Returns null atm
+                        display_message_fragment.getView().findViewById(R.id.display_message_view);
+                textView.setText("hej2");
             }
-
-            // Edit the text view (show written message).
-            TextView textView = (TextView)
-                    display_message_fragment.getView().findViewById(R.id.display_message);
-            textView.setText(message);
-
-        // If orientation is in portrait start new activity.
-        } else {
-            // Create intent.
-            Intent intent = new Intent(this, DisplayMessageActivity.class);
-
-            // Add (user) entered message to the created intent.
-            intent.putExtra(EXTRA_MESSAGE, message);
-
-            // Start an instance of the DisplayMessageActivity specified by the intent.
-            startActivity(intent);
         }
-
 
     }
 }

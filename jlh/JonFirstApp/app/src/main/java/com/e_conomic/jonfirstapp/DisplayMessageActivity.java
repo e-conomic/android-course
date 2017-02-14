@@ -17,7 +17,7 @@ public class DisplayMessageActivity extends AppCompatActivity {
         // Get the message to be shown.
         String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
         // Get the text view and set the message.
-        TextView textView = (TextView) findViewById(R.id.display_message);
+        TextView textView = (TextView) findViewById(R.id.display_message_view);
         textView.setText(message);
     }
 }
