@@ -50,4 +50,11 @@
 
     </LinearLayout>
 
+    <!-- Button to show and hide messages -->
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button_showhide"
+        android:onClick="showHide"/>
+
 </LinearLayout>

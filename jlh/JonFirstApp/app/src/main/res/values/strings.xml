@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">Jon First App</string>
     <string name="edit_message">Enter a message</string>
+    <string name="hello_world">Hello World!</string>
     <string name="button_send">Send</string>
     <string name="button_showhide">Show/Hide message</string>
-    <string name="hello_world">Hello World!</string>
+    <string name="button_clear">Clear messages</string>
 </resources>

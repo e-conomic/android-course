@@ -3,6 +3,7 @@ package com.e_conomic.jonfirstapp;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
 
 public class DisplayMessageActivity extends AppCompatActivity {
@@ -19,5 +20,14 @@ public class DisplayMessageActivity extends AppCompatActivity {
         // Get the text view and set the message.
         TextView textView = (TextView) findViewById(R.id.display_message_view);
         textView.setText(message);
+    }
+
+    /** Called when the user clicks the clear messages button */
+    public void clear(View view) {
+
+        // Get the text view and set the message.
+        TextView textView = (TextView) findViewById(R.id.display_message_view);
+        textView.setText("");
+
     }
 }

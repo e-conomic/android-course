@@ -22,6 +22,9 @@ public class MainActivity extends FragmentActivity {
     // Fragments
     private Fragment display_message_fragment = null;
 
+    // Message string
+    private String message = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +37,20 @@ public class MainActivity extends FragmentActivity {
     public void sendMessage(View view) {
 
         // The message entered by the user.
-        String message = editText.getText().toString();
+        if (message == "") {
+            message = editText.getText().toString();
+        } else {
+            message = message + "\n" + editText.getText().toString();
+        }
+
+        // If the display message fragment is visible show the message there.
+        if (display_message_fragment != null
+                && display_message_fragment.isVisible()) {
+            TextView textView = (TextView) display_message_fragment.getView()
+                    .findViewById(R.id.display_message_view);
+            textView.setText(message);
+            return;
+        }
 
         // Create intent.
         Intent intent = new Intent(this, DisplayMessageActivity.class);
@@ -51,20 +67,40 @@ public class MainActivity extends FragmentActivity {
     /** Called when the user clicks the show/hide button */
     public void showHide(View view) {
 
-        // Check that the correct layout is used.
-        if (findViewById(R.id.land_fragment_container) != null) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        // If the displaying fragment has not been initialized.
+        if (display_message_fragment == null
+                && findViewById(R.id.land_fragment_container) != null) {
             // Create and add Fragment
             display_message_fragment = new DisplayMessageFragment();
-            getSupportFragmentManager().beginTransaction()
+            fragmentManager.beginTransaction()
                     .add(R.id.land_fragment_container, display_message_fragment).commitNow();
+            return;
+        }
 
-            //Edit the text view (show written message).
-            if (display_message_fragment != null) {
-                TextView textView = (TextView)
-                        // Returns null atm
-                        display_message_fragment.getView().findViewById(R.id.display_message_view);
-                textView.setText("hej2");
-            }
+        // Hide Fragment if it is visible.
+        if (display_message_fragment.isVisible()) {
+            fragmentManager.beginTransaction().hide(display_message_fragment).commitNow();
+            return;
+        }
+
+        // Show Fragment if it is hidden.
+        if (display_message_fragment.isHidden()) {
+            fragmentManager.beginTransaction().show(display_message_fragment).commitNow();
+            return;
+        }
+
+    }
+
+    /** Called when the user clicks the clear messages button */
+    public void clear(View view) {
+
+        if (display_message_fragment != null) {
+            TextView textView = (TextView)
+                    display_message_fragment.getView().findViewById(R.id.display_message_view);
+            message = "";
+            textView.setText(message);
         }
 
     }
