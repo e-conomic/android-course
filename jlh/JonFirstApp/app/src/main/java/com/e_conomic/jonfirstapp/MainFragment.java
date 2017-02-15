@@ -1,5 +1,7 @@
 package com.e_conomic.jonfirstapp;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,15 +13,26 @@ import android.widget.EditText;
 
 public class MainFragment extends Fragment {
 
-    private Boolean DISPLAYMESSAGE_STATE = false;
+    // True if the display message fragment is active.
+    private Boolean DISPLAYMESSAGE_STATE;
+
+    MainActivity main_activity;
 
     private EditText editMessage;
     private Button showHideButton;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setRetainInstance(true);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        try {
+            main_activity = (MainActivity) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " is not an activity");
+        }
+
+        // Set the state of the DisplayMessageFragment.
+        DISPLAYMESSAGE_STATE = main_activity.isDisplayMessageFragmentVisible();
     }
 
     @Override
@@ -39,16 +52,18 @@ public class MainFragment extends Fragment {
         setButtonText();
     }
 
+    // Retrieve the message from the text field.
     public String getMessage() {
         return editMessage.getText().toString();
     }
 
+    // Changes the text on the show/hide button and sets the DISPLAYMESSAGE_STATE value.
     public void onButtonClick() {
         DISPLAYMESSAGE_STATE = !DISPLAYMESSAGE_STATE;
         setButtonText();
     }
 
-
+    // Sets the text on the show/hide button.
     private void setButtonText() {
         // Set correct button text.
         if (DISPLAYMESSAGE_STATE) {
