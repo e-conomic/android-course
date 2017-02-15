@@ -3,6 +3,7 @@
     <string name="edit_message">Enter a message</string>
     <string name="hello_world">Hello World!</string>
     <string name="button_send">Send</string>
-    <string name="button_showhide">Show/Hide message</string>
+    <string name="button_showmsg">Show messages</string>
+    <string name="button_hidemsg">Hide messages</string>
     <string name="button_clear">Clear messages</string>
 </resources>

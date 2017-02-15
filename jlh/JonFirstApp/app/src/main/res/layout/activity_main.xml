@@ -51,10 +51,10 @@
     </LinearLayout>
 
     <!-- Button to show and hide messages -->
-    <Button
+    <Button android:id="@+id/button_showhide"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/button_showhide"
+        android:text="@string/button_showmsg"
         android:onClick="showHide"/>
 
 </LinearLayout>
