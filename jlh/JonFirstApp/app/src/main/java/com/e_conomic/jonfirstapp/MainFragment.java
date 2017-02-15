@@ -1,16 +1,20 @@
 package com.e_conomic.jonfirstapp;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 
 public class MainFragment extends Fragment {
 
-    private String BUTTON_SHOWHIDE_TEXT = "";
+    private Boolean DISPLAYMESSAGE_STATE = false;
+
+    private EditText editMessage;
+    private Button showHideButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -25,14 +29,36 @@ public class MainFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_main, container, false);
     }
 
-    public void setShowHideText(String text) {
-        BUTTON_SHOWHIDE_TEXT = text;
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        editMessage = (EditText) getView().findViewById(R.id.edit_message);
+        showHideButton = (Button) getView().findViewById(R.id.button_showhide);
+
+        setButtonText();
     }
 
-    public void setShowHideButtonText() {
-        Button button = (Button) getView().findViewById(R.id.button_showhide);
-        button.setText(BUTTON_SHOWHIDE_TEXT);
+    public String getMessage() {
+        return editMessage.getText().toString();
     }
+
+    public void onButtonClick() {
+        DISPLAYMESSAGE_STATE = !DISPLAYMESSAGE_STATE;
+        setButtonText();
+    }
+
+
+    private void setButtonText() {
+        // Set correct button text.
+        if (DISPLAYMESSAGE_STATE) {
+            showHideButton.setText(R.string.button_hidemsg);
+        } else {
+            showHideButton.setText(R.string.button_showmsg);
+        }
+    }
+
+
 
 }
 

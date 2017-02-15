@@ -42,8 +42,6 @@ public class MainActivity extends FragmentActivity {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         main_fragment = (MainFragment) fragmentManager.findFragmentById(R.id.main_fragment);
-        main_fragment.setShowHideText("hej");
-        main_fragment.setShowHideButtonText();
 
         //if (savedInstanceState != null) {
         //    button_showhide.setText(savedInstanceState.getCharSequence(BUTTON_SHOWHIDE_TEXT));
@@ -70,12 +68,7 @@ public class MainActivity extends FragmentActivity {
     /** Called when the user clicks the Send button */
     public void sendMessage(View view) {
 
-        // The message entered by the user.
-        if (message == "") {
-            message = editText.getText().toString();
-        } else {
-            message = message + "\n" + editText.getText().toString();
-        }
+        message = main_fragment.getMessage();
 
         // If the display message fragment is visible show the message there.
         if (display_message_fragment != null
@@ -104,10 +97,10 @@ public class MainActivity extends FragmentActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         View fragment_container = findViewById(R.id.land_fragment_container);
 
+        main_fragment.onButtonClick();
+
         // If the displaying fragment has not been initialized.
         if (display_message_fragment == null && fragment_container != null) {
-
-            button_showhide.setText(R.string.button_hidemsg);
 
             // Create and add Fragment
             display_message_fragment = new DisplayMessageFragment();
@@ -121,7 +114,6 @@ public class MainActivity extends FragmentActivity {
 
         // Hide Fragment if it is visible.
         if (display_message_fragment.isVisible()) {
-            button_showhide.setText(R.string.button_showmsg);
             fragmentManager.beginTransaction().hide(display_message_fragment).commitNow();
 
             // Set width of fragment layout container to 0.
@@ -131,7 +123,6 @@ public class MainActivity extends FragmentActivity {
 
         // Show Fragment if it is hidden.
         if (display_message_fragment.isHidden()) {
-            button_showhide.setText(R.string.button_hidemsg);
             fragmentManager.beginTransaction().show(display_message_fragment).commitNow();
 
             // Set width of fragment layout container to fill half the screen.
