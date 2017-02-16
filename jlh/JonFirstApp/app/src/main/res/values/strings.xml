@@ -5,5 +5,4 @@
     <string name="button_send">Send</string>
     <string name="button_showmsg">Show messages</string>
     <string name="button_hidemsg">Hide messages</string>
-    <string name="button_clear">Clear messages</string>
 </resources>

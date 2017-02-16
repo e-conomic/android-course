@@ -13,9 +13,7 @@ import android.widget.EditText;
 
 public class MainFragment extends Fragment {
 
-    // True if the display message fragment is active.
-    private Boolean DISPLAYMESSAGE_STATE;
-
+    // The main activity.
     MainActivity main_activity;
 
     private EditText editMessage;
@@ -25,14 +23,13 @@ public class MainFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
 
+        // Retrieve the main activity.
         try {
             main_activity = (MainActivity) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " is not an activity");
+            throw new ClassCastException(context.toString() + " is not an activity.");
         }
 
-        // Set the state of the DisplayMessageFragment.
-        DISPLAYMESSAGE_STATE = main_activity.isDisplayMessageFragmentVisible();
     }
 
     @Override
@@ -46,26 +43,22 @@ public class MainFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Get views used in this fragment.
         editMessage = (EditText) getView().findViewById(R.id.edit_message);
         showHideButton = (Button) getView().findViewById(R.id.button_showhide);
 
         setButtonText();
     }
 
-    // Retrieve the message from the text field.
+    /** Retrieve the message from the text field. */
     public String getMessage() {
         return editMessage.getText().toString();
     }
 
-    // Sets the text on the show/hide button.
+    /** Sets the text on the show/hide button. */
     public void setButtonText() {
-
-        // Update internal value
-        if (main_activity != null) {
-            DISPLAYMESSAGE_STATE = main_activity.isDisplayMessageFragmentVisible();
-        }
         // Set correct button text.
-        if (DISPLAYMESSAGE_STATE) {
+        if (main_activity != null && main_activity.isDisplayMessageFragmentVisible()) {
             showHideButton.setText(R.string.button_hidemsg);
         } else {
             showHideButton.setText(R.string.button_showmsg);

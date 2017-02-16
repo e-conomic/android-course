@@ -5,6 +5,5 @@
     <string name="button_send">Send</string>
     <string name="hello_world">Hej Verden!</string>
     <string name="button_showmsg">Vis beskeder</string>
-    <string name="button_clear">Ryd beskeder</string>
     <string name="button_hidemsg">Skjul beskeder</string>
 </resources>

@@ -8,9 +8,14 @@ import android.view.ViewGroup;
 import android.view.View;
 import android.widget.TextView;
 
+
 public class DisplayMessageFragment extends Fragment {
 
-    private String message = "123";
+    // The message to be displayed.
+    private String message = "";
+
+    // The TextView that displays the message.
+    private TextView display_message;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -24,10 +29,21 @@ public class DisplayMessageFragment extends Fragment {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.display_message, container, false);
     }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        // Get the TextView that shows the message.
+        display_message = (TextView) getView().findViewById(R.id.display_message_view);
+        display_message.setText(message);
+    }
+
+    /** Updates the TextView that shows the message. */
     public void updateMessage(String newMessage) {
         message = newMessage;
-        TextView textView = (TextView) getView().findViewById(R.id.display_message_view);
-        textView.setText(message);
+        if (display_message != null) {
+            display_message.setText(message);
+        }
     }
 
 }
