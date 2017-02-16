@@ -57,14 +57,13 @@ public class MainFragment extends Fragment {
         return editMessage.getText().toString();
     }
 
-    // Changes the text on the show/hide button and sets the DISPLAYMESSAGE_STATE value.
-    public void onButtonClick() {
-        DISPLAYMESSAGE_STATE = !DISPLAYMESSAGE_STATE;
-        setButtonText();
-    }
-
     // Sets the text on the show/hide button.
-    private void setButtonText() {
+    public void setButtonText() {
+
+        // Update internal value
+        if (main_activity != null) {
+            DISPLAYMESSAGE_STATE = main_activity.isDisplayMessageFragmentVisible();
+        }
         // Set correct button text.
         if (DISPLAYMESSAGE_STATE) {
             showHideButton.setText(R.string.button_hidemsg);
