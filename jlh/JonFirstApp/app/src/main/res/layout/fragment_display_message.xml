@@ -7,11 +7,30 @@
 
     <!-- TextView to show the message -->
     <TextView android:id="@+id/text_view_display_message"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="40sp">
+        android:layout_weight="0.5"
+        android:textSize="20sp">
 
     </TextView>
+
+    <!-- Show the previous message -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:textSize="30sp"
+        android:text="@string/prev_message"
+        android:textStyle="bold"/>
+
+    <TextView android:id="@+id/display_prev_message_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.5"
+        android:textSize="20sp">
+
+    </TextView>
+
 
 
 </LinearLayout>
