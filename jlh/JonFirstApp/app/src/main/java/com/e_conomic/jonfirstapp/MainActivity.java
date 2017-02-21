@@ -1,5 +1,8 @@
 package com.e_conomic.jonfirstapp;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -10,6 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +34,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
     final static String PORTRAIT_HIDE_FRAGMENT_LAYOUT = "portraitHideFragment";
     final static int LANDSCAPE = Configuration.ORIENTATION_LANDSCAPE;
 
+    // Extra keys
+    public final static String EXTRA_MESSAGE_FILENAME = "message_filename";
+
     // Fragments
     private DisplayMessageFragment displayMessageFragment = null;
 
@@ -34,6 +45,12 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
 
     // Maps with layout values.
     private Map<String, LinearLayout.LayoutParams> fragmentLayouts = new HashMap<>();
+
+    // Files
+    File messageFile = null;
+
+    // Filenames
+    String messageFilename = "message";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,10 +113,19 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
         // If the display message fragment is visible show the message there.
         if (displayMessageFragment != null) {
             displayMessageFragment.updateMessage(message);
-            return;
+        } else {
+            Log.w(MAIN_ACTIVITY_TAG, "Trying to send a message, but displayMessageFragment is null.");
         }
 
-        Log.w(MAIN_ACTIVITY_TAG, "Trying to send a message, but displayMessageFragment is null.");
+        if (messageFile == null) {
+            try {
+                messageFile = File.createTempFile(messageFilename, null, this.getCacheDir());
+            } catch (IOException ioe) {
+                ioe.printStackTrace();
+            }
+        }
+
+        writeMsgToFile(message);
 
     }
 
@@ -127,6 +153,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
         FragmentTransaction ft = fragmentManager.beginTransaction();
         ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
 
+        int displayOrientation = getResources().getConfiguration().orientation;
+
         // Show or hide the DisplayMessageFragment.
         if (showDisplayMessageFragment) {
             ft.show(displayMessageFragment).commitNow();
@@ -137,8 +165,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
 
         } else {
             ft.hide(displayMessageFragment).commitNow();
-
-            int displayOrientation = getResources().getConfiguration().orientation;
 
             // Set main fragment to fill entire screen.
             if (displayOrientation == LANDSCAPE) {
@@ -153,4 +179,47 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
 
     }
 
+    public void showAllMessages() {
+
+        Intent intent = new Intent(this, DisplayAllMessagesActivity.class);
+        intent.putExtra(EXTRA_MESSAGE_FILENAME, getAllMessages());
+        this.startActivity(intent);
+
+    }
+
+    private String getAllMessages() {
+        FileInputStream messageInputStream;
+        byte[] allMessages = new byte[8];
+        String newString = "";
+
+        try {
+            messageInputStream = openFileInput(messageFilename);
+            Log.i("AVAILABLE BYTES: ", Integer.toString(messageInputStream.available()));
+            messageInputStream.read(allMessages);
+            messageInputStream.close();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+
+        newString = new String(allMessages, Charset.defaultCharset());
+        Log.i("ALL THE MESSAGES:", newString);
+
+        return newString;
+    }
+
+    /** Helper function to write the sent message to file.
+     *
+     * @param message The message to write. */
+    private void writeMsgToFile(String message) {
+
+        FileOutputStream messageOutputStream;
+
+        try {
+            messageOutputStream = openFileOutput(messageFilename, Context.MODE_PRIVATE);
+            messageOutputStream.write(message.getBytes());
+            messageOutputStream.close();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
+    }
 }

@@ -47,9 +47,31 @@
 
     </LinearLayout>
 
-    <!-- Button to show and hide messages -->
-    <Button android:id="@+id/button_showhide"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <!-- Button to show and hide messages -->
+        <Button android:id="@+id/button_showhide"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"/>
+
+
+        <!-- Button to show all messages -->
+        <Button android:id="@+id/button_show_all_messages"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/show_all_messages"
+            android:layout_weight="0.5"/>
+
+
+    </LinearLayout>
+
+    <ImageView android:id="@+id/image_view_host"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@mipmap/host"/>
 
 </LinearLayout>

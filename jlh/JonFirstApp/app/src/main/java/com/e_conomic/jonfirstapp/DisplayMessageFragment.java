@@ -23,6 +23,7 @@ public class DisplayMessageFragment extends Fragment {
     // The messages to be displayed.
     private String message = "";
     private String prev_message = "";
+    private String no_prev_message = "";
 
     // The TextView that displays the message.
     private TextView display_message;
@@ -32,9 +33,11 @@ public class DisplayMessageFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
+        no_prev_message = getResources().getString(R.string.no_prev_message);
+
         // Get the previous message.
         SharedPreferences sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
-        prev_message = sharedPreferences.getString(PREV_MESSAGE, "No previous message");
+        prev_message = sharedPreferences.getString(PREV_MESSAGE, no_prev_message);
     }
 
     @Override
@@ -51,7 +54,7 @@ public class DisplayMessageFragment extends Fragment {
         display_message = (TextView) getView().findViewById(R.id.text_view_display_message);
         display_message.setText(message);
         // Set the previous message.
-        TextView display_prev_message = (TextView) getView().findViewById(R.id.display_prev_message_view);
+        TextView display_prev_message = (TextView) getView().findViewById(R.id.text_view_display_prev_message);
         display_prev_message.setText(prev_message);
     }
 
@@ -62,7 +65,7 @@ public class DisplayMessageFragment extends Fragment {
         // Save the current message.
         SharedPreferences sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(PREV_MESSAGE, "onStop: " + message);
+        editor.putString(PREV_MESSAGE, message);
         editor.commit();
     }
 
