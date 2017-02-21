@@ -34,20 +34,20 @@ public class MainActivity extends FragmentActivity {
             isDisplayMessageFragmentVisible = true;
         }
 
-        setContentView(R.layout.fragment_layout);
+        setContentView(R.layout.activity_main);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         // Setup main fragment
-        main_fragment = (MainFragment) fragmentManager.findFragmentById(R.id.main_fragment);
+        main_fragment = (MainFragment) fragmentManager.findFragmentById(R.id.fragment_main);
 
         // Find the DisplayMessageFragment on restart.
         display_message_fragment = (DisplayMessageFragment)
-                fragmentManager.findFragmentById(R.id.fragment_container);
+                fragmentManager.findFragmentById(R.id.fragment_container_display_message);
 
         if (isDisplayMessageFragmentVisible) {
             // Set width of fragment layout container to fill half the screen.
-            changeFragmentLayout(findViewById(R.id.fragment_container),
+            changeFragmentLayout(findViewById(R.id.fragment_container_display_message),
                     ViewGroup.LayoutParams.MATCH_PARENT);
         }
 
@@ -55,7 +55,7 @@ public class MainActivity extends FragmentActivity {
         if (display_message_fragment == null) {
             FragmentTransaction ft = fragmentManager.beginTransaction();
             display_message_fragment = new DisplayMessageFragment();
-            ft.add(R.id.fragment_container, display_message_fragment).commitNow();
+            ft.add(R.id.fragment_container_display_message, display_message_fragment).commitNow();
         }
 
     }
@@ -67,7 +67,7 @@ public class MainActivity extends FragmentActivity {
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    /** Called when the user clicks the Send button */
+    /** Called when the user clicks the Send button. */
     public void sendMessage(View view) {
 
         // If the display message fragment is visible show the message there.
@@ -77,7 +77,7 @@ public class MainActivity extends FragmentActivity {
 
     }
 
-    /** Called when the user clicks the show/hide button */
+    /** Called when the user clicks the show/hide button. */
     public void showHide(View view) {
 
         // If the displaying fragment has not been initialized return.
@@ -86,7 +86,7 @@ public class MainActivity extends FragmentActivity {
         }
 
         // Setup FragmentManager and FragmentTransaction.
-        View fragment_container = findViewById(R.id.fragment_container);
+        View fragment_container = findViewById(R.id.fragment_container_display_message);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -122,7 +122,7 @@ public class MainActivity extends FragmentActivity {
 
     }
 
-    /** Helper function to change the layout of the fragment container */
+    /** Helper function to change the layout of the fragment container. */
     private void changeFragmentLayout(View fragment_layout, int newLayoutParam) {
 
         // Get the current Layout parameters.
@@ -139,7 +139,7 @@ public class MainActivity extends FragmentActivity {
         fragment_layout.setLayoutParams(layoutParams);
     }
 
-    /** Retrieves the isDisplayMessageFragmentVisible boolean. */
+    /** Check whether the fragment that displays the message is visible. */
     public Boolean isDisplayMessageFragmentVisible() {
         return isDisplayMessageFragmentVisible;
     }

@@ -27,18 +27,20 @@ public class DisplayMessageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.display_message, container, false);
+        return inflater.inflate(R.layout.fragment_display_message, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         // Get the TextView that shows the message.
-        display_message = (TextView) getView().findViewById(R.id.display_message_view);
+        display_message = (TextView) getView().findViewById(R.id.text_view_display_message);
         display_message.setText(message);
     }
 
-    /** Updates the TextView that shows the message. */
+    /** Updates the TextView that shows the message.
+     *
+     * @param newMessage The new message to be shown. */
     public void updateMessage(String newMessage) {
         message = newMessage;
         if (display_message != null) {

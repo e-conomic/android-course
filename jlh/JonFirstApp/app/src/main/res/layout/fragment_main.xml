@@ -14,7 +14,7 @@
         android:orientation="horizontal">
 
         <!-- Hello world text view -->
-        <TextView android:id="@+id/hello_world"
+        <TextView
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.9"
@@ -35,7 +35,7 @@
         android:orientation="horizontal">
 
         <!-- Text field to edit message -->
-        <EditText android:id="@+id/edit_message"
+        <EditText android:id="@+id/edit_text_message"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"

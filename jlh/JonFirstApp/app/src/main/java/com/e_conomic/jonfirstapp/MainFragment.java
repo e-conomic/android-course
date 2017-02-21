@@ -1,6 +1,5 @@
 package com.e_conomic.jonfirstapp;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,8 +12,7 @@ import android.widget.EditText;
 
 public class MainFragment extends Fragment {
 
-    // The main activity.
-    MainActivity main_activity;
+    MainActivity mainActivity;
 
     private EditText editMessage;
     private Button showHideButton;
@@ -25,9 +23,9 @@ public class MainFragment extends Fragment {
 
         // Retrieve the main activity.
         try {
-            main_activity = (MainActivity) context;
+            mainActivity = (MainActivity) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " is not an activity.");
+            throw new ClassCastException(context.toString() + " is not a MainActivity.");
         }
 
     }
@@ -44,7 +42,7 @@ public class MainFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Get views used in this fragment.
-        editMessage = (EditText) getView().findViewById(R.id.edit_message);
+        editMessage = (EditText) getView().findViewById(R.id.edit_text_message);
         showHideButton = (Button) getView().findViewById(R.id.button_showhide);
 
         setButtonText();
@@ -58,7 +56,7 @@ public class MainFragment extends Fragment {
     /** Sets the text on the show/hide button. */
     public void setButtonText() {
         // Set correct button text.
-        if (main_activity != null && main_activity.isDisplayMessageFragmentVisible()) {
+        if (mainActivity != null && mainActivity.isDisplayMessageFragmentVisible()) {
             showHideButton.setText(R.string.button_hidemsg);
         } else {
             showHideButton.setText(R.string.button_showmsg);
