@@ -3,6 +3,7 @@ package com.e_conomic.jonfirstapp;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
@@ -10,6 +11,9 @@ import android.widget.TextView;
 
 
 public class DisplayMessageFragment extends Fragment {
+
+    // Tags
+    final static String DISPLAY_MESSAGE_FRAGMENT_TAG = "DisplayMessageFragment";
 
     // The message to be displayed.
     private String message = "";
@@ -47,7 +51,10 @@ public class DisplayMessageFragment extends Fragment {
         // TODO: what if it is null?
         if (display_message != null) {
             display_message.setText(message);
+            return;
         }
+        Log.w(DISPLAY_MESSAGE_FRAGMENT_TAG,
+                "Trying to update message, but display_message is null.");
     }
 
 }

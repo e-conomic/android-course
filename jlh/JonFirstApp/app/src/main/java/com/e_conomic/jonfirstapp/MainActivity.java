@@ -5,27 +5,29 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
 
 public class MainActivity extends FragmentActivity {
 
-    // Tags
-    final static String DISPLAY_MESSAGE_FRAGMENT_TAG = "DMF_TAG";
-
     // Values to be saved
     private Boolean isDisplayMessageFragmentVisible;
+
+    // Tags
+    final static String DISPLAY_MESSAGE_FRAGMENT_TAG = "DMF_TAG";
+    final static String MAIN_ACTIVITY_TAG = "MainActivity";
 
     // Keys.
     final static String IS_MESSAGE_FRAGMENT_VISIBLE = "IS_MSG_VISIBLE";
 
     // Fragments
-    private DisplayMessageFragment display_message_fragment = null;
-    private MainFragment main_fragment = null;
+    private DisplayMessageFragment displayMessageFragment = null;
+    private MainFragment mainFragment = null;
 
     // Views
-    View fragment_container_display_message = null;
+    View displayMessageFragmentContainer = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +62,7 @@ public class MainActivity extends FragmentActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         // Setup main fragment
-        main_fragment = (MainFragment) fragmentManager.findFragmentById(R.id.fragment_main);
+        mainFragment = (MainFragment) fragmentManager.findFragmentById(R.id.fragment_main);
 
 
         if (isDisplayMessageFragmentVisible) {
@@ -70,14 +72,14 @@ public class MainActivity extends FragmentActivity {
         }
 
         // Find the DisplayMessageFragment on restart.
-        display_message_fragment = (DisplayMessageFragment)
+        displayMessageFragment = (DisplayMessageFragment)
                 fragmentManager.findFragmentByTag(DISPLAY_MESSAGE_FRAGMENT_TAG);
 
         // Create DisplayMessageFragment if it hasn't been created yet. Show by default.
-        if (display_message_fragment == null) {
+        if (displayMessageFragment == null) {
             FragmentTransaction ft = fragmentManager.beginTransaction();
-            display_message_fragment = new DisplayMessageFragment();
-            ft.add(R.id.fragment_container_display_message, display_message_fragment,
+            displayMessageFragment = new DisplayMessageFragment();
+            ft.add(R.id.fragment_container_display_message, displayMessageFragment,
                     DISPLAY_MESSAGE_FRAGMENT_TAG).commitNow();
         }
 
@@ -87,9 +89,12 @@ public class MainActivity extends FragmentActivity {
     public void sendMessage(View view) {
 
         // If the display message fragment is visible show the message there.
-        if (display_message_fragment != null) {
-            display_message_fragment.updateMessage(main_fragment.getMessage());
+        if (displayMessageFragment != null) {
+            displayMessageFragment.updateMessage(mainFragment.getMessage());
+            return;
         }
+
+        Log.w(MAIN_ACTIVITY_TAG, "Trying to send a message, but display_message_fragment is null.");
 
     }
 
@@ -97,13 +102,14 @@ public class MainActivity extends FragmentActivity {
     public void showHide(View view) {
 
         // If the displaying fragment has not been initialized return.
-        if (display_message_fragment == null) {
+        if (displayMessageFragment == null) {
             return;
         }
 
         // Setup FragmentManager and FragmentTransaction.
-        if (fragment_container_display_message == null) {
-            fragment_container_display_message = findViewById(R.id.fragment_container_display_message);
+        if (displayMessageFragmentContainer == null) {
+            displayMessageFragmentContainer =
+                    findViewById(R.id.fragment_container_display_message);
         }
 
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -112,31 +118,27 @@ public class MainActivity extends FragmentActivity {
 
 
         // Hide Fragment if it is visible.
-        if (display_message_fragment.isVisible()) {
-            ft.hide(display_message_fragment).commitNow();
+        if (displayMessageFragment.isVisible()) {
+            ft.hide(displayMessageFragment).commitNow();
 
             isDisplayMessageFragmentVisible = false;
 
             // Inform the main fragment of the change
-            main_fragment.setButtonText();
+            mainFragment.setButtonText();
 
             // Set width of fragment layout container to 0.
-            changeFragmentLayout(fragment_container_display_message, 0);
-            return;
-        }
-
-        // Show Fragment if it is hidden.
-        if (display_message_fragment.isHidden()) {
-            ft.show(display_message_fragment).commitNow();
+            changeFragmentLayout(displayMessageFragmentContainer, 0);
+        } else {
+            ft.show(displayMessageFragment).commitNow();
 
             isDisplayMessageFragmentVisible = true;
 
             // Inform the main fragment of the change
-            main_fragment.setButtonText();
+            mainFragment.setButtonText();
 
-            // Set width of fragment layout container to fill half the screen.
-            changeFragmentLayout(fragment_container_display_message, ViewGroup.LayoutParams.MATCH_PARENT);
-            return;
+            // Set width of fragment layout container to fill half the screen. MATCH PARENT
+            changeFragmentLayout(displayMessageFragmentContainer,
+                    ViewGroup.LayoutParams.MATCH_PARENT);
         }
 
     }
