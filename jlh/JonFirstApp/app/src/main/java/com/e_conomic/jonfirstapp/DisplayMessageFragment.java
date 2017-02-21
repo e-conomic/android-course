@@ -43,6 +43,8 @@ public class DisplayMessageFragment extends Fragment {
      * @param newMessage The new message to be shown. */
     public void updateMessage(String newMessage) {
         message = newMessage;
+
+        // TODO: what if it is null?
         if (display_message != null) {
             display_message.setText(message);
         }

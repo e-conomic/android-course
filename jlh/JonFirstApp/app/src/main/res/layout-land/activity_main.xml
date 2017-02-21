@@ -11,7 +11,7 @@
     </fragment>
     <FrameLayout
         android:id="@+id/fragment_container_display_message"
-        android:layout_width="0sp"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="0.5">
 

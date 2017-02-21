@@ -11,6 +11,9 @@ import android.view.ViewGroup;
 
 public class MainActivity extends FragmentActivity {
 
+    // Tags
+    final static String DISPLAY_MESSAGE_FRAGMENT_TAG = "DMF_TAG";
+
     // Values to be saved
     private Boolean isDisplayMessageFragmentVisible;
 
@@ -20,6 +23,9 @@ public class MainActivity extends FragmentActivity {
     // Fragments
     private DisplayMessageFragment display_message_fragment = null;
     private MainFragment main_fragment = null;
+
+    // Views
+    View fragment_container_display_message = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,28 +42,7 @@ public class MainActivity extends FragmentActivity {
 
         setContentView(R.layout.activity_main);
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-
-        // Setup main fragment
-        main_fragment = (MainFragment) fragmentManager.findFragmentById(R.id.fragment_main);
-
-        // Find the DisplayMessageFragment on restart.
-        display_message_fragment = (DisplayMessageFragment)
-                fragmentManager.findFragmentById(R.id.fragment_container_display_message);
-
-        if (isDisplayMessageFragmentVisible) {
-            // Set width of fragment layout container to fill half the screen.
-            changeFragmentLayout(findViewById(R.id.fragment_container_display_message),
-                    ViewGroup.LayoutParams.MATCH_PARENT);
-        }
-
-        // Create DisplayMessageFragment if it hasn't been created yet. Show by default.
-        if (display_message_fragment == null) {
-            FragmentTransaction ft = fragmentManager.beginTransaction();
-            display_message_fragment = new DisplayMessageFragment();
-            ft.add(R.id.fragment_container_display_message, display_message_fragment).commitNow();
-        }
-
+        setupFragments();
     }
 
     @Override
@@ -65,6 +50,37 @@ public class MainActivity extends FragmentActivity {
         // Save the state of the DisplayMessageFragment.
         savedInstanceState.putBoolean(IS_MESSAGE_FRAGMENT_VISIBLE, isDisplayMessageFragmentVisible);
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    /** Helper method that retrieves references to the fragments used in this activity and sets
+     * the layout. Also creates the fragment that displays the message if it hasn't been created
+     * yet. */
+    private void setupFragments() {
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        // Setup main fragment
+        main_fragment = (MainFragment) fragmentManager.findFragmentById(R.id.fragment_main);
+
+
+        if (isDisplayMessageFragmentVisible) {
+            // Set width of fragment layout container to fill half the screen.
+            changeFragmentLayout(findViewById(R.id.fragment_container_display_message),
+                    ViewGroup.LayoutParams.MATCH_PARENT);
+        }
+
+        // Find the DisplayMessageFragment on restart.
+        display_message_fragment = (DisplayMessageFragment)
+                fragmentManager.findFragmentByTag(DISPLAY_MESSAGE_FRAGMENT_TAG);
+
+        // Create DisplayMessageFragment if it hasn't been created yet. Show by default.
+        if (display_message_fragment == null) {
+            FragmentTransaction ft = fragmentManager.beginTransaction();
+            display_message_fragment = new DisplayMessageFragment();
+            ft.add(R.id.fragment_container_display_message, display_message_fragment,
+                    DISPLAY_MESSAGE_FRAGMENT_TAG).commitNow();
+        }
+
     }
 
     /** Called when the user clicks the Send button. */
@@ -86,7 +102,10 @@ public class MainActivity extends FragmentActivity {
         }
 
         // Setup FragmentManager and FragmentTransaction.
-        View fragment_container = findViewById(R.id.fragment_container_display_message);
+        if (fragment_container_display_message == null) {
+            fragment_container_display_message = findViewById(R.id.fragment_container_display_message);
+        }
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -102,7 +121,7 @@ public class MainActivity extends FragmentActivity {
             main_fragment.setButtonText();
 
             // Set width of fragment layout container to 0.
-            changeFragmentLayout(fragment_container, 0);
+            changeFragmentLayout(fragment_container_display_message, 0);
             return;
         }
 
@@ -116,7 +135,7 @@ public class MainActivity extends FragmentActivity {
             main_fragment.setButtonText();
 
             // Set width of fragment layout container to fill half the screen.
-            changeFragmentLayout(fragment_container, ViewGroup.LayoutParams.MATCH_PARENT);
+            changeFragmentLayout(fragment_container_display_message, ViewGroup.LayoutParams.MATCH_PARENT);
             return;
         }
 
