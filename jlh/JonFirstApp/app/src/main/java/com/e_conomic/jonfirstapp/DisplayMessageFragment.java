@@ -62,7 +62,7 @@ public class DisplayMessageFragment extends Fragment {
         // Save the current message.
         SharedPreferences sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(PREV_MESSAGE, "onStop: " + message);
+        editor.putString(PREV_MESSAGE, message);
         editor.commit();
     }
 
