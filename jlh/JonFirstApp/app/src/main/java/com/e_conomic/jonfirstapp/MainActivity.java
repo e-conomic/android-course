@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
     private View displayMessageFragmentContainer = null;
 
     // Maps with layout values.
-    private Map<String, ViewGroup.LayoutParams> fragmentLayouts = new HashMap<>();
+    private Map<String, LinearLayout.LayoutParams> fragmentLayouts = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,21 +49,28 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
 
         // Set fragment layout values.
         fragmentLayouts.put(SHOW_FRAGMENT_LAYOUT,
-                new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT));
+                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT, (float) 0.5));
         fragmentLayouts.put(LANDSCAPE_HIDE_FRAGMENT_LAYOUT,
-                new ViewGroup.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT));
+                new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT,
+                        (float) 0.5));
         fragmentLayouts.put(PORTRAIT_HIDE_FRAGMENT_LAYOUT,
-                new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0));
+                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, (float) 0.5));
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
         MainFragment mainFragment = (MainFragment)
                 fragmentManager.findFragmentById(R.id.fragment_main);
 
+        // Find the container that holds the DisplayMessageFragment.
+        if (displayMessageFragmentContainer == null) {
+            displayMessageFragmentContainer =
+                    findViewById(R.id.fragment_container_display_message);
+        }
+
         if (mainFragment.isDisplayMessageFragmentVisible()) {
             // Set width of fragment layout container to fill half the screen.
-            changeFragmentLayout(findViewById(R.id.fragment_container_display_message),
+            displayMessageFragmentContainer.setLayoutParams(
                     fragmentLayouts.get(SHOW_FRAGMENT_LAYOUT));
         }
 
@@ -91,7 +99,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
             return;
         }
 
-        Log.w(MAIN_ACTIVITY_TAG, "Trying to send a message, but display_message_fragment is null.");
+        Log.w(MAIN_ACTIVITY_TAG, "Trying to send a message, but displayMessageFragment is null.");
 
     }
 
@@ -103,15 +111,18 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
 
         // If the displaying fragment has not been initialized return.
         if (displayMessageFragment == null) {
+            Log.w(MAIN_ACTIVITY_TAG,
+                    "Pressed show/hide button, but the displayMessageFragment is null.");
+            return;
+        }
+
+        if (displayMessageFragmentContainer == null) {
+            Log.w(MAIN_ACTIVITY_TAG,
+                    "Pressed show/hide button, but the displayMessageFragmentContainer is null.");
             return;
         }
 
         // Setup FragmentManager and FragmentTransaction.
-        if (displayMessageFragmentContainer == null) {
-            displayMessageFragmentContainer =
-                    findViewById(R.id.fragment_container_display_message);
-        }
-
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction ft = fragmentManager.beginTransaction();
         ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -121,8 +132,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
             ft.show(displayMessageFragment).commitNow();
 
             // Set size of displayMessageFragment layout container to fill half the screen.
-            changeFragmentLayout(displayMessageFragmentContainer,
+            displayMessageFragmentContainer.setLayoutParams(
                     fragmentLayouts.get(SHOW_FRAGMENT_LAYOUT));
+
         } else {
             ft.hide(displayMessageFragment).commitNow();
 
@@ -130,31 +142,15 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
 
             // Set main fragment to fill entire screen.
             if (displayOrientation == LANDSCAPE) {
-                changeFragmentLayout(displayMessageFragmentContainer,
+
+                displayMessageFragmentContainer.setLayoutParams(
                         fragmentLayouts.get(LANDSCAPE_HIDE_FRAGMENT_LAYOUT));
             } else {
-                changeFragmentLayout(displayMessageFragmentContainer,
+                displayMessageFragmentContainer.setLayoutParams(
                         fragmentLayouts.get(PORTRAIT_HIDE_FRAGMENT_LAYOUT));
             }
         }
 
-    }
-
-    /** Helper function to change the layout of the fragment container.
-     *
-     * @param viewGroup The view that receives a layout change.
-     * @param newLayoutParams The new layout parameters that will be added to the given view. */
-    private void changeFragmentLayout(View viewGroup, ViewGroup.LayoutParams newLayoutParams) {
-
-        // Get the current Layout parameters.
-        ViewGroup.LayoutParams layoutParams = viewGroup.getLayoutParams();
-
-        // Set the width and height of the layout that contains the fragment.
-        layoutParams.height = newLayoutParams.height;
-        layoutParams.width = newLayoutParams.width;
-
-        // Set new Layout parameters.
-        viewGroup.setLayoutParams(layoutParams);
     }
 
 }
