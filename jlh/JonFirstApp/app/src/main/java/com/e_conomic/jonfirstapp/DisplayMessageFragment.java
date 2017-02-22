@@ -1,5 +1,7 @@
 package com.e_conomic.jonfirstapp;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,8 +17,12 @@ public class DisplayMessageFragment extends Fragment {
     // Tags
     final static String DISPLAY_MESSAGE_FRAGMENT_TAG = "DisplayMessageFragment";
 
-    // The message to be displayed.
+    // Keys
+    static final String PREV_MESSAGE = "PREV_MESSAGE";
+
+    // The messages to be displayed.
     private String message = "";
+    private String prev_message = "";
 
     // The TextView that displays the message.
     private TextView display_message;
@@ -25,6 +31,10 @@ public class DisplayMessageFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+
+        // Get the previous message.
+        SharedPreferences sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+        prev_message = sharedPreferences.getString(PREV_MESSAGE, "No previous message");
     }
 
     @Override
@@ -40,6 +50,20 @@ public class DisplayMessageFragment extends Fragment {
         // Get the TextView that shows the message.
         display_message = (TextView) getView().findViewById(R.id.text_view_display_message);
         display_message.setText(message);
+        // Set the previous message.
+        TextView display_prev_message = (TextView) getView().findViewById(R.id.display_prev_message_view);
+        display_prev_message.setText(prev_message);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // Save the current message.
+        SharedPreferences sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(PREV_MESSAGE, "onStop: " + message);
+        editor.commit();
     }
 
     /** Updates the TextView that shows the message.
