@@ -10,22 +10,34 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements View.OnClickListener {
 
+    MainFragmentListener delegate;
     MainActivity mainActivity;
 
     private EditText editMessage;
     private Button showHideButton;
 
+    public interface MainFragmentListener {
+        void sendMessage(String message);
+        void showHide();
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        // Retrieve the main activity.
         try {
             mainActivity = (MainActivity) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " is not a MainActivity.");
+            throw new ClassCastException(context.toString() + " must be a MainActivity.");
+        }
+
+        try {
+            delegate = (MainFragmentListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement sendMessage method.");
         }
 
     }
@@ -44,8 +56,22 @@ public class MainFragment extends Fragment {
         // Get views used in this fragment.
         editMessage = (EditText) getView().findViewById(R.id.edit_text_message);
         showHideButton = (Button) getView().findViewById(R.id.button_showhide);
+        Button sendButton = (Button) getView().findViewById(R.id.button_send);
+
+        // Set listeners
+        showHideButton.setOnClickListener(this);
+        sendButton.setOnClickListener(this);
 
         setButtonText();
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.button_send) {
+            delegate.sendMessage(editMessage.getText().toString());
+        } else {
+
+        }
     }
 
     /** Retrieve the message from the text field. */

@@ -42,11 +42,10 @@
             android:hint="@string/edit_message"/>
 
         <!-- Button to send written message -->
-        <Button
+        <Button android:id="@+id/button_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/button_send"
-            android:onClick="sendMessage"/>
+            android:text="@string/button_send"/>
 
     </LinearLayout>
 
@@ -54,7 +53,6 @@
     <Button android:id="@+id/button_showhide"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/button_showmsg"
-        android:onClick="showHide"/>
+        android:text="@string/button_showmsg"/>
 
 </LinearLayout>

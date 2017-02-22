@@ -10,7 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements MainFragment.MainFragmentListener {
 
     // Values to be saved
     private Boolean isDisplayMessageFragmentVisible;
@@ -86,11 +86,11 @@ public class MainActivity extends FragmentActivity {
     }
 
     /** Called when the user clicks the Send button. */
-    public void sendMessage(View view) {
+    public void sendMessage(String message) {
 
         // If the display message fragment is visible show the message there.
         if (displayMessageFragment != null) {
-            displayMessageFragment.updateMessage(mainFragment.getMessage());
+            displayMessageFragment.updateMessage(message);
             return;
         }
 
@@ -99,7 +99,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     /** Called when the user clicks the show/hide button. */
-    public void showHide(View view) {
+    public void showHide() {
 
         // If the displaying fragment has not been initialized return.
         if (displayMessageFragment == null) {
