@@ -10,24 +10,36 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements View.OnClickListener {
 
-    MainActivity mainActivity;
+    MainFragmentListener delegate;
+
+    private Boolean isDisplayMessageFragmentVisible = true;
 
     private EditText editMessage;
     private Button showHideButton;
+
+    public interface MainFragmentListener {
+        void sendMessage(String message);
+        void showHide(Boolean showDisplayMessageFragment);
+    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
 
-        // Retrieve the main activity.
         try {
-            mainActivity = (MainActivity) context;
+            delegate = (MainFragmentListener) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " is not a MainActivity.");
+            throw new ClassCastException(context.toString()
+                    + " must implement sendMessage and showHide methods.");
         }
+    }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
@@ -44,23 +56,38 @@ public class MainFragment extends Fragment {
         // Get views used in this fragment.
         editMessage = (EditText) getView().findViewById(R.id.edit_text_message);
         showHideButton = (Button) getView().findViewById(R.id.button_showhide);
+        Button sendButton = (Button) getView().findViewById(R.id.button_send);
+
+        // Set listeners
+        showHideButton.setOnClickListener(this);
+        sendButton.setOnClickListener(this);
 
         setButtonText();
     }
 
-    /** Retrieve the message from the text field. */
-    public String getMessage() {
-        return editMessage.getText().toString();
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.button_send) {
+            delegate.sendMessage(editMessage.getText().toString());
+        } else {
+            isDisplayMessageFragmentVisible = !isDisplayMessageFragmentVisible;
+            delegate.showHide(isDisplayMessageFragmentVisible);
+            setButtonText();
+        }
     }
 
     /** Sets the text on the show/hide button. */
-    public void setButtonText() {
-        // Set correct button text.
-        if (mainActivity != null && mainActivity.isDisplayMessageFragmentVisible()) {
+    private void setButtonText() {
+        if (isDisplayMessageFragmentVisible) {
             showHideButton.setText(R.string.button_hidemsg);
         } else {
             showHideButton.setText(R.string.button_showmsg);
         }
+    }
+
+    /** Returns true if the fragment that displays the message is visible. */
+    public Boolean isDisplayMessageFragmentVisible() {
+        return isDisplayMessageFragmentVisible;
     }
 
 

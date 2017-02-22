@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!-- Root View. Linearly horizontally oriented. -->
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -42,19 +40,16 @@
             android:hint="@string/edit_message"/>
 
         <!-- Button to send written message -->
-        <Button
+        <Button android:id="@+id/button_send"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/button_send"
-            android:onClick="sendMessage"/>
+            android:text="@string/button_send"/>
 
     </LinearLayout>
 
     <!-- Button to show and hide messages -->
     <Button android:id="@+id/button_showhide"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/button_showmsg"
-        android:onClick="showHide"/>
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>
