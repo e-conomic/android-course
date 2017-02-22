@@ -18,6 +18,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     private EditText editMessage;
     private Button showHideButton;
+    private Button sendButton;
 
     public interface MainFragmentListener {
         void sendMessage(String message);
@@ -56,7 +57,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         // Get views used in this fragment.
         editMessage = (EditText) getView().findViewById(R.id.edit_text_message);
         showHideButton = (Button) getView().findViewById(R.id.button_showhide);
-        Button sendButton = (Button) getView().findViewById(R.id.button_send);
+        sendButton = (Button) getView().findViewById(R.id.button_send);
 
         // Set listeners
         showHideButton.setOnClickListener(this);
@@ -67,7 +68,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.button_send) {
+        if (v == sendButton) {
             delegate.sendMessage(editMessage.getText().toString());
         } else {
             isDisplayMessageFragmentVisible = !isDisplayMessageFragmentVisible;
