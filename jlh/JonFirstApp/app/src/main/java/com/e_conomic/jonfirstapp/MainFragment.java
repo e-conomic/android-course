@@ -21,6 +21,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     public interface MainFragmentListener {
         void sendMessage(String message);
+
         void showHide(Boolean showDisplayMessageFragment);
     }
 
