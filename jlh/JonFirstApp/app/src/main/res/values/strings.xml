@@ -6,4 +6,6 @@
     <string name="button_showmsg">Show messages</string>
     <string name="button_hidemsg">Hide messages</string>
     <string name="prev_message">Your message from the last session:</string>
+    <string name="no_prev_message">No previous message</string>
+    <string name="show_all_messages">Show all messages</string>
 </resources>

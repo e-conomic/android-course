@@ -7,4 +7,6 @@
     <string name="button_showmsg">Vis beskeder</string>
     <string name="button_hidemsg">Skjul beskeder</string>
     <string name="prev_message">Din besked fra den sidste session:</string>
+    <string name="no_prev_message">Ingen tidligere besked</string>
+    <string name="show_all_messages">Vis alle beskeder</string>
 </resources>
