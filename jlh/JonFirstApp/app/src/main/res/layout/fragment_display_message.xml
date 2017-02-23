@@ -9,7 +9,7 @@
     <TextView android:id="@+id/text_view_display_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.5"
+        android:layout_weight="1.0"
         android:textSize="20sp">
 
     </TextView>
@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.5"
-        android:textSize="30sp"
+        android:textSize="22sp"
         android:text="@string/prev_message"
         android:textStyle="bold"/>
 

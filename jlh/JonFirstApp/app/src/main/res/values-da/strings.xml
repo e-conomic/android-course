@@ -6,5 +6,5 @@
     <string name="hello_world">Hej Verden!</string>
     <string name="button_showmsg">Vis beskeder</string>
     <string name="button_hidemsg">Skjul beskeder</string>
-    <string name="prev_message">Din tidligere besked:</string>
+    <string name="prev_message">Din besked fra den sidste session:</string>
 </resources>
