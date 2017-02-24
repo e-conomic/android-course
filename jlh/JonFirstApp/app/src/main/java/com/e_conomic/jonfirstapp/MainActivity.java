@@ -1,68 +1,156 @@
 package com.e_conomic.jonfirstapp;
 
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends FragmentActivity implements MainFragment.MainFragmentListener {
 
-    // Key for the intent extra holding the message.
-    public final static String EXTRA_MESSAGE = "MESSAGE";
+    // Tags
+    final static String DISPLAY_MESSAGE_FRAGMENT_TAG = "DisplayMessageFragment";
+    final static String MAIN_ACTIVITY_TAG = "MainActivity";
 
-    // Used to hold the reference to the text field containing the message to be written.
-    private EditText editText = null;
+    // Layout keys and values
+    final static String SHOW_FRAGMENT_LAYOUT = "showFragment";
+    final static String LANDSCAPE_HIDE_FRAGMENT_LAYOUT = "landscapeHideFragment";
+    final static String PORTRAIT_HIDE_FRAGMENT_LAYOUT = "portraitHideFragment";
+    final static int LANDSCAPE = Configuration.ORIENTATION_LANDSCAPE;
 
     // Fragments
-    private Fragment display_message_fragment = null;
+    private DisplayMessageFragment displayMessageFragment = null;
+
+    // Views
+    private View displayMessageFragmentContainer = null;
+
+    // Maps with layout values.
+    private Map<String, LinearLayout.LayoutParams> fragmentLayouts = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_layout);
-        editText = (EditText) findViewById(R.id.edit_message);
+        setContentView(R.layout.activity_main);
+        setupFragments();
     }
 
-    /** Called when the user clicks the Send button */
-    public void sendMessage(View view) {
+    /** Helper method that retrieves references to the fragments used in this activity and sets
+     * the layout. Also creates the fragment that displays the message if it hasn't been created
+     * yet. */
+    private void setupFragments() {
 
-        // The message entered by the user.
-        String message = editText.getText().toString();
+        // Set fragment layout values.
+        fragmentLayouts.put(SHOW_FRAGMENT_LAYOUT,
+                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT, (float) 0.5));
+        fragmentLayouts.put(LANDSCAPE_HIDE_FRAGMENT_LAYOUT,
+                new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT,
+                        (float) 0.5));
+        fragmentLayouts.put(PORTRAIT_HIDE_FRAGMENT_LAYOUT,
+                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, (float) 0.5));
 
-        // If orientation is in landscape add message to fragment.
-        if (getResources().getConfiguration().orientation ==
-                Configuration.ORIENTATION_LANDSCAPE) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
 
-            // Get the fragment that shows the message.
-            if (display_message_fragment == null) {
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                display_message_fragment =
-                        fragmentManager.findFragmentById(R.id.displaymessage_fragment);
-            }
+        MainFragment mainFragment = (MainFragment)
+                fragmentManager.findFragmentById(R.id.fragment_main);
 
-            // Edit the text view (show written message).
-            TextView textView = (TextView)
-                    display_message_fragment.getView().findViewById(R.id.display_message);
-            textView.setText(message);
-
-        // If orientation is in portrait start new activity.
-        } else {
-            // Create intent.
-            Intent intent = new Intent(this, DisplayMessageActivity.class);
-
-            // Add (user) entered message to the created intent.
-            intent.putExtra(EXTRA_MESSAGE, message);
-
-            // Start an instance of the DisplayMessageActivity specified by the intent.
-            startActivity(intent);
+        // Find the container that holds the DisplayMessageFragment.
+        if (displayMessageFragmentContainer == null) {
+            displayMessageFragmentContainer =
+                    findViewById(R.id.fragment_container_display_message);
         }
 
+        if (mainFragment.isDisplayMessageFragmentVisible()) {
+            // Set width of fragment layout container to fill half the screen.
+            displayMessageFragmentContainer.setLayoutParams(
+                    fragmentLayouts.get(SHOW_FRAGMENT_LAYOUT));
+        }
+
+        // Find the DisplayMessageFragment on restart.
+        displayMessageFragment = (DisplayMessageFragment)
+                fragmentManager.findFragmentByTag(DISPLAY_MESSAGE_FRAGMENT_TAG);
+
+        // Create DisplayMessageFragment if it hasn't been created yet. Show by default.
+        if (displayMessageFragment == null) {
+            FragmentTransaction ft = fragmentManager.beginTransaction();
+            displayMessageFragment = new DisplayMessageFragment();
+            ft.add(R.id.fragment_container_display_message, displayMessageFragment,
+                    DISPLAY_MESSAGE_FRAGMENT_TAG).commitNow();
+        }
 
     }
+
+    /** Called when the user clicks the Send button.
+     *
+     * @param message The message to be shown. */
+    public void sendMessage(String message) {
+
+        // If the display message fragment is visible show the message there.
+        if (displayMessageFragment != null) {
+            displayMessageFragment.updateMessage(message);
+            return;
+        }
+
+        Log.w(MAIN_ACTIVITY_TAG, "Trying to send a message, but displayMessageFragment is null.");
+
+    }
+
+    /** Called when the user clicks the show/hide button.
+     *
+     * @param showDisplayMessageFragment True if the fragment that shows the message should be
+     *                                   visible on screen. */
+    public void showHide(Boolean showDisplayMessageFragment) {
+
+        // If the displaying fragment has not been initialized return.
+        if (displayMessageFragment == null) {
+            Log.w(MAIN_ACTIVITY_TAG,
+                    "Pressed show/hide button, but the displayMessageFragment is null.");
+            return;
+        }
+
+        if (displayMessageFragmentContainer == null) {
+            Log.w(MAIN_ACTIVITY_TAG,
+                    "Pressed show/hide button, but the displayMessageFragmentContainer is null.");
+            return;
+        }
+
+        // Setup FragmentManager and FragmentTransaction.
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+
+        // Show or hide the DisplayMessageFragment.
+        if (showDisplayMessageFragment) {
+            ft.show(displayMessageFragment).commitNow();
+
+            // Set size of displayMessageFragment layout container to fill half the screen.
+            displayMessageFragmentContainer.setLayoutParams(
+                    fragmentLayouts.get(SHOW_FRAGMENT_LAYOUT));
+
+        } else {
+            ft.hide(displayMessageFragment).commitNow();
+
+            int displayOrientation = getResources().getConfiguration().orientation;
+
+            // Set main fragment to fill entire screen.
+            if (displayOrientation == LANDSCAPE) {
+
+                displayMessageFragmentContainer.setLayoutParams(
+                        fragmentLayouts.get(LANDSCAPE_HIDE_FRAGMENT_LAYOUT));
+            } else {
+                displayMessageFragmentContainer.setLayoutParams(
+                        fragmentLayouts.get(PORTRAIT_HIDE_FRAGMENT_LAYOUT));
+            }
+        }
+
+    }
+
 }
