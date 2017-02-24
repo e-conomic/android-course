@@ -37,6 +37,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
 
     // Extra keys
     public final static String EXTRA_MESSAGE_FILENAME = "message_filename";
+    public final static String EXTRA_MESSAGE_FILE_ABS_PATH = "message_file_abs_path";
 
     // Fragments
     private DisplayMessageFragment displayMessageFragment = null;
@@ -52,6 +53,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
 
     // Filenames
     String messageFilename = "message";
+
+    // Absolute file paths
+    String messageFileAbsolutePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -189,31 +193,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
     public void showAllMessages() {
 
         Intent intent = new Intent(this, DisplayAllMessagesActivity.class);
-        intent.putExtra(EXTRA_MESSAGE_FILENAME, getAllMessages());
+        intent.putExtra(EXTRA_MESSAGE_FILE_ABS_PATH, messageFile.getPath());
+        intent.putExtra(EXTRA_MESSAGE_FILENAME, messageFilename);
         this.startActivity(intent);
-    }
-
-    private String getAllMessages() {
-        FileInputStream messageInputStream;
-        // TODO: make byte array of bigger size... (reads repeat some stuff??)
-        byte[] tempMessages = new byte[1];
-        ByteArrayOutputStream messageByteOutputStream = new ByteArrayOutputStream();
-
-        try {
-            messageInputStream = openFileInput(messageFilename);
-            Log.i("AVAILABLE BYTES: ", Integer.toString(messageInputStream.available()));
-            while (messageInputStream.read(tempMessages) != -1) {
-                Log.i("TEMPORARY MSG: ", new String(tempMessages, Charset.defaultCharset()));
-                messageByteOutputStream.write(tempMessages);
-            }
-            messageInputStream.close();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-
-        String finalMessages = messageByteOutputStream.toString();
-        Log.i("ALL THE MESSAGES:", finalMessages);
-        return finalMessages;
     }
 
     /** Helper function to write the sent message to file.
