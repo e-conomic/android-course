@@ -26,6 +26,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
 
     // Tags
     final static String DISPLAY_MESSAGE_FRAGMENT_TAG = "DisplayMessageFragment";
+    final static String MAIN_ACTIVITY_TAG = "MainActivity";
 
     // Layout keys and values
     final static String SHOW_FRAGMENT_LAYOUT = "showFragment";
