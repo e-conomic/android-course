@@ -58,6 +58,12 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setupFragments();
+
+        try {
+            messageFile = File.createTempFile(messageFilename, null, this.getCacheDir());
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
     }
 
     /** Helper method that retrieves references to the fragments used in this activity and sets
@@ -115,7 +121,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
         if (displayMessageFragment != null) {
             displayMessageFragment.updateMessage(message);
         } else {
-            Log.w(MAIN_ACTIVITY_TAG, "Trying to send a message, but displayMessageFragment is null.");
+            Log.w(MAIN_ACTIVITY_TAG,
+                    "Pressed send message button, but displayMessageFragment is null.");
         }
 
         if (messageFile == null) {
@@ -188,13 +195,15 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
 
     private String getAllMessages() {
         FileInputStream messageInputStream;
-        byte[] tempMessages = new byte[8];
+        // TODO: make byte array of bigger size... (reads repeat some stuff??)
+        byte[] tempMessages = new byte[1];
         ByteArrayOutputStream messageByteOutputStream = new ByteArrayOutputStream();
 
         try {
             messageInputStream = openFileInput(messageFilename);
             Log.i("AVAILABLE BYTES: ", Integer.toString(messageInputStream.available()));
             while (messageInputStream.read(tempMessages) != -1) {
+                Log.i("TEMPORARY MSG: ", new String(tempMessages, Charset.defaultCharset()));
                 messageByteOutputStream.write(tempMessages);
             }
             messageInputStream.close();
@@ -214,8 +223,10 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
 
         FileOutputStream messageOutputStream;
 
+        Log.i("MESSAGE TO BE WRITTEN: ", message);
+
         try {
-            messageOutputStream = openFileOutput(messageFilename, Context.MODE_PRIVATE);
+            messageOutputStream = openFileOutput(messageFilename, Context.MODE_APPEND);
             messageOutputStream.write(message.getBytes());
             messageOutputStream.close();
         } catch (IOException ioe) {
