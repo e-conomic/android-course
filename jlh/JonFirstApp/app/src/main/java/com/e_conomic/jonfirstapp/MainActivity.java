@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -187,22 +188,23 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
 
     private String getAllMessages() {
         FileInputStream messageInputStream;
-        byte[] allMessages = new byte[8];
-        String newString = "";
+        byte[] tempMessages = new byte[8];
+        ByteArrayOutputStream messageByteOutputStream = new ByteArrayOutputStream();
 
         try {
             messageInputStream = openFileInput(messageFilename);
             Log.i("AVAILABLE BYTES: ", Integer.toString(messageInputStream.available()));
-            messageInputStream.read(allMessages);
+            while (messageInputStream.read(tempMessages) != -1) {
+                messageByteOutputStream.write(tempMessages);
+            }
             messageInputStream.close();
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
 
-        newString = new String(allMessages, Charset.defaultCharset());
-        Log.i("ALL THE MESSAGES:", newString);
-
-        return newString;
+        String finalMessages = messageByteOutputStream.toString();
+        Log.i("ALL THE MESSAGES:", finalMessages);
+        return finalMessages;
     }
 
     /** Helper function to write the sent message to file.
