@@ -16,10 +16,7 @@ import java.nio.charset.Charset;
 
 public class DisplayAllMessagesActivity extends AppCompatActivity {
 
-    // TODO: which ones are really necessary?
-    private String messageFilePath;
     private String messageFileName;
-    private File messageFile;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -27,9 +24,7 @@ public class DisplayAllMessagesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_display_all_messages);
 
         Intent intent = getIntent();
-        messageFilePath = intent.getStringExtra(MainActivity.EXTRA_MESSAGE_FILE_ABS_PATH);
         messageFileName = intent.getStringExtra(MainActivity.EXTRA_MESSAGE_FILENAME);
-        messageFile = new File(messageFilePath);
     }
 
     @Override
@@ -40,27 +35,23 @@ public class DisplayAllMessagesActivity extends AppCompatActivity {
     }
 
 
+    /** Retrieve all the previous messages written. */
     private String getAllMessages() {
         FileInputStream messageInputStream;
-        // TODO: make byte array of bigger size... (reads repeat some stuff??)
-        byte[] tempMessages = new byte[1];
-        ByteArrayOutputStream messageByteOutputStream = new ByteArrayOutputStream();
+        int tempByte;
+        StringBuffer allMessages = new StringBuffer("");
 
         try {
             messageInputStream = openFileInput(messageFileName);
-            Log.i("AVAILABLE BYTES: ", Integer.toString(messageInputStream.available()));
-            while (messageInputStream.read(tempMessages) != -1) {
-                Log.i("TEMPORARY MSG: ", new String(tempMessages, Charset.defaultCharset()));
-                messageByteOutputStream.write(tempMessages);
+            while ((tempByte = messageInputStream.read()) != -1) {
+                allMessages.append((char) tempByte);
             }
             messageInputStream.close();
         } catch (IOException ioe) {
             ioe.printStackTrace();
         }
 
-        String finalMessages = messageByteOutputStream.toString();
-        Log.i("ALL THE MESSAGES:", finalMessages);
-        return finalMessages;
+        return allMessages.toString();
     }
 
 }

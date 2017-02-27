@@ -16,6 +16,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     private Boolean isDisplayMessageFragmentVisible = true;
 
+    // Views
     private EditText editMessage;
     private Button showHideButton;
     private Button sendButton;
@@ -75,6 +76,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
         if (v == sendButton) {
             delegate.sendMessage(editMessage.getText().toString());
+            editMessage.setText("");
         } else if (v == showHideButton) {
             isDisplayMessageFragmentVisible = !isDisplayMessageFragmentVisible;
             delegate.showHide(isDisplayMessageFragmentVisible);

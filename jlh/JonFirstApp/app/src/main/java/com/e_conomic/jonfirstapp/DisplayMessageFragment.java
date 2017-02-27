@@ -23,7 +23,6 @@ public class DisplayMessageFragment extends Fragment {
     // The messages to be displayed.
     private String message = "";
     private String prev_message = "";
-    private String no_prev_message = "";
 
     // The TextView that displays the message.
     private TextView display_message;
@@ -33,7 +32,7 @@ public class DisplayMessageFragment extends Fragment {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
 
-        no_prev_message = getResources().getString(R.string.no_prev_message);
+        String no_prev_message = getResources().getString(R.string.no_prev_message);
 
         // Get the previous message.
         SharedPreferences sharedPreferences = getActivity().getPreferences(Context.MODE_PRIVATE);

@@ -1,6 +1,5 @@
 package com.e_conomic.jonfirstapp;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -13,12 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,7 +35,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
 
     // Extra keys
     public final static String EXTRA_MESSAGE_FILENAME = "message_filename";
-    public final static String EXTRA_MESSAGE_FILE_ABS_PATH = "message_file_abs_path";
 
     // Fragments
     private DisplayMessageFragment displayMessageFragment = null;
@@ -49,13 +46,10 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
     private Map<String, LinearLayout.LayoutParams> fragmentLayouts = new HashMap<>();
 
     // Files
-    File messageFile = null;
+    private File messageFile = null;
 
     // Filenames
-    String messageFilename = "message";
-
-    // Absolute file paths
-    String messageFileAbsolutePath;
+    private final String messageFilename = "messageFile";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,18 +120,35 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
             displayMessageFragment.updateMessage(message);
         } else {
             Log.w(MAIN_ACTIVITY_TAG,
-                    "Pressed send message button, but displayMessageFragment is null.");
+                    "Trying to send message, but displayMessageFragment is null.");
         }
 
         if (messageFile == null) {
-            try {
-                messageFile = File.createTempFile(messageFilename, null, this.getCacheDir());
-            } catch (IOException ioe) {
-                ioe.printStackTrace();
-            }
+            Log.w(MAIN_ACTIVITY_TAG,
+                    "Trying to write message to file, but file is not initialized");
+        } else {
+            writeMessageToFile(message);
         }
-        writeMsgToFile(message);
 
+    }
+
+    /** Helper function to write the sent message to file.
+     *
+     * @param message The message to write. */
+    private void writeMessageToFile(String message) {
+
+        String date = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
+                .format(Calendar.getInstance().getTime());
+        FileOutputStream messageOutputStream;
+        String finalMessage = date + ":\n" + message + "\n";
+
+        try {
+            messageOutputStream = openFileOutput(messageFilename, Context.MODE_APPEND);
+            messageOutputStream.write(finalMessage.getBytes());
+            messageOutputStream.close();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
     }
 
     /** Called when the user clicks the show/hide button.
@@ -190,29 +201,13 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
 
     }
 
+    /** Creates a new activity that shows all the previous messages, i.e. the contents of the
+     * file containing the previously written messages. */
     public void showAllMessages() {
 
         Intent intent = new Intent(this, DisplayAllMessagesActivity.class);
-        intent.putExtra(EXTRA_MESSAGE_FILE_ABS_PATH, messageFile.getPath());
         intent.putExtra(EXTRA_MESSAGE_FILENAME, messageFilename);
         this.startActivity(intent);
     }
 
-    /** Helper function to write the sent message to file.
-     *
-     * @param message The message to write. */
-    private void writeMsgToFile(String message) {
-
-        FileOutputStream messageOutputStream;
-
-        Log.i("MESSAGE TO BE WRITTEN: ", message);
-
-        try {
-            messageOutputStream = openFileOutput(messageFilename, Context.MODE_APPEND);
-            messageOutputStream.write(message.getBytes());
-            messageOutputStream.close();
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-    }
 }
