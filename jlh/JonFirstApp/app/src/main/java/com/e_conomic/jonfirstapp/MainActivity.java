@@ -57,11 +57,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
         setContentView(R.layout.activity_main);
         setupFragments();
 
-        try {
-            messageFile = File.createTempFile(messageFilename, null, this.getCacheDir());
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
+        messageFile = new File(this.getFilesDir(), messageFilename);
+
     }
 
     /** Helper method that retrieves references to the fragments used in this activity and sets
@@ -123,12 +120,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
                     "Trying to send message, but displayMessageFragment is null.");
         }
 
-        if (messageFile == null) {
-            Log.w(MAIN_ACTIVITY_TAG,
-                    "Trying to write message to file, but file is not initialized");
-        } else {
-            writeMessageToFile(message);
-        }
+        writeMessageToFile(message);
 
     }
 
@@ -136,6 +128,12 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
      *
      * @param message The message to write. */
     private void writeMessageToFile(String message) {
+
+        if (messageFile == null) {
+            Log.w(MAIN_ACTIVITY_TAG,
+                    "Trying to write message to file, but file is not initialized");
+            return;
+        }
 
         String date = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
                 .format(Calendar.getInstance().getTime());
@@ -175,8 +173,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
         FragmentTransaction ft = fragmentManager.beginTransaction();
         ft.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
 
-        int displayOrientation = getResources().getConfiguration().orientation;
-
         // Show or hide the DisplayMessageFragment.
         if (showDisplayMessageFragment) {
             ft.show(displayMessageFragment).commitNow();
@@ -187,6 +183,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
 
         } else {
             ft.hide(displayMessageFragment).commitNow();
+
+            int displayOrientation = getResources().getConfiguration().orientation;
 
             // Set main fragment to fill entire screen.
             if (displayOrientation == LANDSCAPE) {
@@ -204,7 +202,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
     /** Creates a new activity that shows all the previous messages, i.e. the contents of the
      * file containing the previously written messages. */
     public void showAllMessages() {
-
         Intent intent = new Intent(this, DisplayAllMessagesActivity.class);
         intent.putExtra(EXTRA_MESSAGE_FILENAME, messageFilename);
         this.startActivity(intent);

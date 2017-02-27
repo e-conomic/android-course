@@ -16,7 +16,7 @@ import java.nio.charset.Charset;
 
 public class DisplayAllMessagesActivity extends AppCompatActivity {
 
-    private String messageFileName;
+    private static String messageFileName;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,7 +39,7 @@ public class DisplayAllMessagesActivity extends AppCompatActivity {
     private String getAllMessages() {
         FileInputStream messageInputStream;
         int tempByte;
-        StringBuffer allMessages = new StringBuffer("");
+        StringBuilder allMessages = new StringBuilder();
 
         try {
             messageInputStream = openFileInput(messageFileName);
