@@ -3,7 +3,9 @@ package com.e_conomic.jonfirstapp;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -40,7 +42,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
     private View displayMessageFragmentContainer = null;
 
     // Maps with layout values.
-    private Map<String, LinearLayout.LayoutParams> fragmentLayouts = new HashMap<>();
+    private Map<String, LinearLayout.LayoutParams> layouts = new HashMap<>();
 
     // Filenames
     public final static String messageFilename = "messageFile";
@@ -58,13 +60,13 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
     private void setupFragments() {
 
         // Set fragment layout values.
-        fragmentLayouts.put(SHOW_FRAGMENT_LAYOUT,
+        layouts.put(SHOW_FRAGMENT_LAYOUT,
                 new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT, (float) 0.5));
-        fragmentLayouts.put(LANDSCAPE_HIDE_FRAGMENT_LAYOUT,
+        layouts.put(LANDSCAPE_HIDE_FRAGMENT_LAYOUT,
                 new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT,
                         (float) 0.5));
-        fragmentLayouts.put(PORTRAIT_HIDE_FRAGMENT_LAYOUT,
+        layouts.put(PORTRAIT_HIDE_FRAGMENT_LAYOUT,
                 new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, (float) 0.5));
 
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -81,7 +83,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
         if (mainFragment.isDisplayMessageFragmentVisible()) {
             // Set width of fragment layout container to fill half the screen.
             displayMessageFragmentContainer.setLayoutParams(
-                    fragmentLayouts.get(SHOW_FRAGMENT_LAYOUT));
+                    layouts.get(SHOW_FRAGMENT_LAYOUT));
         }
 
         // Find the DisplayMessageFragment on restart.
@@ -164,7 +166,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
 
             // Set size of displayMessageFragment layout container to fill half the screen.
             displayMessageFragmentContainer.setLayoutParams(
-                    fragmentLayouts.get(SHOW_FRAGMENT_LAYOUT));
+                    layouts.get(SHOW_FRAGMENT_LAYOUT));
 
         } else {
             ft.hide(displayMessageFragment).commitNow();
@@ -175,10 +177,10 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
             if (displayOrientation == LANDSCAPE) {
 
                 displayMessageFragmentContainer.setLayoutParams(
-                        fragmentLayouts.get(LANDSCAPE_HIDE_FRAGMENT_LAYOUT));
+                        layouts.get(LANDSCAPE_HIDE_FRAGMENT_LAYOUT));
             } else {
                 displayMessageFragmentContainer.setLayoutParams(
-                        fragmentLayouts.get(PORTRAIT_HIDE_FRAGMENT_LAYOUT));
+                        layouts.get(PORTRAIT_HIDE_FRAGMENT_LAYOUT));
             }
         }
 
@@ -189,5 +191,4 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
     public void showAllMessages() {
         this.startActivity(new Intent(this, DisplayAllMessagesActivity.class));
     }
-
 }

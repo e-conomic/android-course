@@ -1,7 +1,10 @@
 package com.e_conomic.jonfirstapp;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,18 +12,28 @@ import android.view.ViewGroup;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import static android.app.Activity.RESULT_OK;
 
 public class MainFragment extends Fragment {
 
     MainFragmentListener delegate;
 
     private Boolean isDisplayMessageFragmentVisible = true;
+    private Boolean isRecipientAdded = false;
+
+    // Request codes
+    static final int PICK_CONTACT_REQUEST = 1;
 
     // Views
     private EditText editMessage;
     private Button showHideButton;
     private Button sendButton;
     private Button showAllMessagesButton;
+    private Button chooseRecipientButton;
+    private TextView recipientDetailsTextView = null;
 
     public interface MainFragmentListener {
         void sendMessage(String message);
@@ -62,9 +75,30 @@ public class MainFragment extends Fragment {
         showHideButton = (Button) getView().findViewById(R.id.button_showhide);
         sendButton = (Button) getView().findViewById(R.id.button_send);
         showAllMessagesButton = (Button) getView().findViewById(R.id.button_show_all_messages);
+        chooseRecipientButton = (Button) getView().findViewById(R.id.button_choose_recipient);
 
         setButtonListeners();
         setButtonText();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_CONTACT_REQUEST && resultCode == RESULT_OK) {
+
+            if (recipientDetailsTextView == null) {
+                recipientDetailsTextView =
+                        (TextView) getView().findViewById(R.id.text_view_recipient_details);
+            }
+
+            Uri contactUri = data.getData();
+            String[] phoneNumber = {ContactsContract.CommonDataKinds.Phone.NUMBER};
+
+            // TODO: what the shit is going on here?
+
+            recipientDetailsTextView.setText("DET VIRKER");
+        }
     }
 
     /** Helper function that sets the needed button listeners and their corresponding onClick
@@ -94,6 +128,20 @@ public class MainFragment extends Fragment {
                 delegate.showAllMessages();
             }
         });
+
+        chooseRecipientButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (isRecipientAdded) {
+                    pickContact();
+                } else {
+                    addRecipient();
+                    pickContact();
+                    isRecipientAdded = true;
+                }
+            }
+        });
     }
 
     /** Sets the text on the show/hide button. */
@@ -103,6 +151,27 @@ public class MainFragment extends Fragment {
         } else {
             showHideButton.setText(R.string.button_showmsg);
         }
+    }
+
+
+    /** Helper method that adds a view group containing recipient information. */
+    private void addRecipient() {
+        LayoutInflater layoutInflater = getActivity().getLayoutInflater();
+        View recipientViewGroup =
+                layoutInflater.inflate(R.layout.recipient_layout, null);
+
+        ViewGroup fragmentRootView = (ViewGroup) getView();
+        LinearLayout.LayoutParams recipientLayoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        fragmentRootView.addView(recipientViewGroup, 1, recipientLayoutParams);
+    }
+
+    /** Creates a new activity that lets the user pick a contact to send the message to. */
+    private void pickContact(){
+        Intent pickContactIntent = new Intent(Intent.ACTION_PICK, Uri.parse("content://contacts"));
+        pickContactIntent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
+        startActivityForResult(pickContactIntent, PICK_CONTACT_REQUEST);
     }
 
     /** Returns true if the fragment that displays the message is visible. */
