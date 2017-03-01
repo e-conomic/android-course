@@ -22,9 +22,7 @@ public class DisplayAllMessagesActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_all_messages);
-
-        Intent intent = getIntent();
-        messageFileName = intent.getStringExtra(MainActivity.EXTRA_MESSAGE_FILENAME);
+        messageFileName = MainActivity.messageFilename;
     }
 
     @Override

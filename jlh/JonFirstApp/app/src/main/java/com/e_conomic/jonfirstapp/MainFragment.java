@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class MainFragment extends Fragment implements View.OnClickListener {
+public class MainFragment extends Fragment {
 
     MainFragmentListener delegate;
 
@@ -63,27 +63,37 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         sendButton = (Button) getView().findViewById(R.id.button_send);
         showAllMessagesButton = (Button) getView().findViewById(R.id.button_show_all_messages);
 
-        // Set listeners
-        showHideButton.setOnClickListener(this);
-        sendButton.setOnClickListener(this);
-        showAllMessagesButton.setOnClickListener(this);
-
+        setButtonListeners();
         setButtonText();
     }
 
-    @Override
-    public void onClick(View v) {
+    /** Helper function that sets the needed button listeners and their corresponding onClick
+     * method, i.e. handle the button clicks. */
+    private void setButtonListeners() {
 
-        if (v == sendButton) {
-            delegate.sendMessage(editMessage.getText().toString());
-            editMessage.setText("");
-        } else if (v == showHideButton) {
-            isDisplayMessageFragmentVisible = !isDisplayMessageFragmentVisible;
-            delegate.showHide(isDisplayMessageFragmentVisible);
-            setButtonText();
-        } else {
-            delegate.showAllMessages();
-        }
+        sendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                delegate.sendMessage(editMessage.getText().toString());
+                editMessage.setText("");
+            }
+        });
+
+        showHideButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                isDisplayMessageFragmentVisible = !isDisplayMessageFragmentVisible;
+                delegate.showHide(isDisplayMessageFragmentVisible);
+                setButtonText();
+            }
+        });
+
+        showAllMessagesButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                delegate.showAllMessages();
+            }
+        });
     }
 
     /** Sets the text on the show/hide button. */

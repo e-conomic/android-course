@@ -33,9 +33,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
     final static String PORTRAIT_HIDE_FRAGMENT_LAYOUT = "portraitHideFragment";
     final static int LANDSCAPE = Configuration.ORIENTATION_LANDSCAPE;
 
-    // Extra keys
-    public final static String EXTRA_MESSAGE_FILENAME = "message_filename";
-
     // Fragments
     private DisplayMessageFragment displayMessageFragment = null;
 
@@ -45,20 +42,14 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
     // Maps with layout values.
     private Map<String, LinearLayout.LayoutParams> fragmentLayouts = new HashMap<>();
 
-    // Files
-    private File messageFile = null;
-
     // Filenames
-    private final String messageFilename = "messageFile";
+    public final static String messageFilename = "messageFile";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setupFragments();
-
-        messageFile = new File(this.getFilesDir(), messageFilename);
-
     }
 
     /** Helper method that retrieves references to the fragments used in this activity and sets
@@ -129,12 +120,6 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
      * @param message The message to write. */
     private void writeMessageToFile(String message) {
 
-        if (messageFile == null) {
-            Log.w(MAIN_ACTIVITY_TAG,
-                    "Trying to write message to file, but file is not initialized");
-            return;
-        }
-
         String date = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
                 .format(Calendar.getInstance().getTime());
         FileOutputStream messageOutputStream;
@@ -202,9 +187,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
     /** Creates a new activity that shows all the previous messages, i.e. the contents of the
      * file containing the previously written messages. */
     public void showAllMessages() {
-        Intent intent = new Intent(this, DisplayAllMessagesActivity.class);
-        intent.putExtra(EXTRA_MESSAGE_FILENAME, messageFilename);
-        this.startActivity(intent);
+        this.startActivity(new Intent(this, DisplayAllMessagesActivity.class));
     }
 
 }
