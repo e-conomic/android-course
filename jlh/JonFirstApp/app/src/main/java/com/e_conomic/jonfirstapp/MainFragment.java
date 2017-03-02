@@ -2,6 +2,7 @@ package com.e_conomic.jonfirstapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -15,6 +16,9 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static android.app.Activity.RESULT_OK;
 
 public class MainFragment extends Fragment {
@@ -25,7 +29,14 @@ public class MainFragment extends Fragment {
     private Boolean isRecipientAdded = false;
 
     // Request codes
-    static final int PICK_CONTACT_REQUEST = 1;
+    final static int PICK_CONTACT_REQUEST = 1;
+
+    // Contact keys
+    final static String PHONE_NUMBER = "phoneNumber";
+    final static String DISPLAY_NAME = "displayName";
+
+    // Map with contact details. TODO: make this unambiguous?
+    private Map<String, String> contactDetails = new HashMap<>();
 
     // Views
     private EditText editMessage;
@@ -93,12 +104,35 @@ public class MainFragment extends Fragment {
             }
 
             Uri contactUri = data.getData();
-            String[] phoneNumber = {ContactsContract.CommonDataKinds.Phone.NUMBER};
+            String[] contactProjection = {
+                    contactDetails.get(PHONE_NUMBER),
+                    contactDetails.get(DISPLAY_NAME)
+            };
 
-            // TODO: what the shit is going on here?
+            Cursor cursor = getActivity().getContentResolver().query(
+                    contactUri, contactProjection, null, null, null);
 
-            recipientDetailsTextView.setText("DET VIRKER");
+            // Move cursor to first row.
+            cursor.moveToFirst();
+
+            // Get contact information.
+            int contactNameColumn = cursor.getColumnIndex(contactDetails.get(DISPLAY_NAME));
+            int contactNumberColumn = cursor.getColumnIndex(contactDetails.get(PHONE_NUMBER));
+
+            String contactName = cursor.getString(contactNameColumn);
+            String contactNumber = cursor.getString(contactNumberColumn);
+
+            cursor.close();
+
+            recipientDetailsTextView.setText(contactName + " at " + contactNumber);
+
+            // TODO: use cursorLoader.
         }
+    }
+
+    private void setupContactDetails() {
+        contactDetails.put(PHONE_NUMBER, ContactsContract.CommonDataKinds.Phone.NUMBER);
+        contactDetails.put(DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
     }
 
     /** Helper function that sets the needed button listeners and their corresponding onClick

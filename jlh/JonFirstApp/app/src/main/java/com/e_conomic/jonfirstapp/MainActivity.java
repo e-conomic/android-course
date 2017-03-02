@@ -41,7 +41,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
     // Views
     private View displayMessageFragmentContainer = null;
 
-    // Maps with layout values.
+    // Map with layout values.
     private Map<String, LinearLayout.LayoutParams> layouts = new HashMap<>();
 
     // Filenames
