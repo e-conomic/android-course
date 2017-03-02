@@ -11,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
@@ -29,22 +28,25 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     MainFragmentListener delegate;
 
+    private LoaderManager loaderManager;
+
     private Boolean isDisplayMessageFragmentVisible = true;
     private Boolean isRecipientAdded = false;
+
+    private String contactPhoneNumber = null;
+    private String contactName = null;
 
     // Request codes
     final static int PICK_CONTACT_REQUEST = 1;
 
     // Keys
-    final static String PHONE_NUMBER = "phoneNumber";
+    final static String PHONE_NUMBER = "contactPhoneNumber";
     final static String DISPLAY_NAME = "displayName";
-    final static String CONTACT_DETAILS = "contactDetails";
+    final static String CONTACT_DETAILS = "phoneValues";
+    final static String PHONE_DIRECTORY_CONTENT_TYPE = "phoneDirectoryContentType";
 
-    // Map with contact details. TODO: make this unambiguous?
-    private Map<String, String> contactDetails = new HashMap<>();
-
-    // Loader manager
-    private LoaderManager loaderManager;
+    // Map with phoneValues values. TODO: make the second type unambiguous?
+    private Map<String, String> phoneValues = new HashMap<>();
 
     // Views
     private EditText editMessage;
@@ -84,7 +86,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_main, container, false);
+        return inflater.inflate(R.layout.fragment_main, container, true);
     }
 
     @Override
@@ -114,13 +116,20 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
             cursorLoaderArgs.putString(CONTACT_DETAILS, contactUri.toString());
             loaderManager.restartLoader(0, cursorLoaderArgs, this);
 
+            if (!isRecipientAdded) {
+                addRecipientView((ViewGroup) getView());
+                isRecipientAdded = true;
+            }
+
         }
     }
 
     /** Helper function that fills a hash map containing contact details mappings. */
     private void setupContactDetails() {
-        contactDetails.put(PHONE_NUMBER, ContactsContract.CommonDataKinds.Phone.NUMBER);
-        contactDetails.put(DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+        phoneValues.put(PHONE_NUMBER, ContactsContract.CommonDataKinds.Phone.NUMBER);
+        phoneValues.put(DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+        phoneValues.put(PHONE_DIRECTORY_CONTENT_TYPE,
+                ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
     }
 
     /** Helper function that sets the needed button listeners and their corresponding onClick
@@ -130,8 +139,17 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                delegate.sendMessage(editMessage.getText().toString());
+                String message = editMessage.getText().toString();
+                delegate.sendMessage(message);
                 editMessage.setText("");
+
+                if (contactPhoneNumber == null) {
+                    return;
+                }
+
+                SmsManager smsManager = SmsManager.getDefault();
+                smsManager.sendTextMessage(contactPhoneNumber, null, message, null, null);
+
             }
         });
 
@@ -154,14 +172,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         chooseRecipientButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if (isRecipientAdded) {
-                    pickContact();
-                } else {
-                    addRecipient();
-                    pickContact();
-                    isRecipientAdded = true;
-                }
+                pickContact();
             }
         });
     }
@@ -175,30 +186,40 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         }
     }
 
-
     /** Helper method that adds a view group containing recipient information. */
-    private void addRecipient() {
+    private void addRecipientView(ViewGroup rootView) {
         LayoutInflater layoutInflater = getActivity().getLayoutInflater();
-        View recipientViewGroup =
-                layoutInflater.inflate(R.layout.recipient_layout, null);
 
-        ViewGroup fragmentRootView = (ViewGroup) getView();
+        View recipientViewGroup =
+                layoutInflater.inflate(R.layout.recipient_layout, rootView, false);
+
         LinearLayout.LayoutParams recipientLayoutParams = new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        fragmentRootView.addView(recipientViewGroup, 1, recipientLayoutParams);
+        rootView.addView(recipientViewGroup, 1, recipientLayoutParams);
     }
 
     /** Creates a new activity that lets the user pick a contact to send the message to. */
     private void pickContact(){
         Intent pickContactIntent = new Intent(Intent.ACTION_PICK, Uri.parse("content://contacts"));
-        pickContactIntent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
+        pickContactIntent.setType(phoneValues.get(PHONE_DIRECTORY_CONTENT_TYPE));
         startActivityForResult(pickContactIntent, PICK_CONTACT_REQUEST);
     }
 
     /** Returns true if the fragment that displays the message is visible. */
     public Boolean isDisplayMessageFragmentVisible() {
         return isDisplayMessageFragmentVisible;
+    }
+
+    /** Sets the text of the text view that displays the recipient. */
+    private void setRecipientDetails() {
+
+        if (recipientDetailsTextView == null) {
+            recipientDetailsTextView =
+                    (TextView) getView().findViewById(R.id.text_view_recipient_details);
+        }
+
+        recipientDetailsTextView.setText(contactName + " at " + contactPhoneNumber);
     }
 
     @Override
@@ -212,8 +233,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         Uri contactUri = Uri.parse(args.getString(CONTACT_DETAILS));
 
         String[] contactProjection = {
-                contactDetails.get(PHONE_NUMBER),
-                contactDetails.get(DISPLAY_NAME)
+                phoneValues.get(PHONE_NUMBER),
+                phoneValues.get(DISPLAY_NAME)
         };
 
         return new CursorLoader(getActivity(), contactUri, contactProjection, null, null, null);
@@ -225,18 +246,16 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         data.moveToFirst();
 
         // Get contact information.
-        int contactNameColumn = data.getColumnIndex(contactDetails.get(DISPLAY_NAME));
-        int contactNumberColumn = data.getColumnIndex(contactDetails.get(PHONE_NUMBER));
+        int contactNameColumn = data.getColumnIndex(phoneValues.get(DISPLAY_NAME));
+        int contactNumberColumn = data.getColumnIndex(phoneValues.get(PHONE_NUMBER));
 
-        String contactName = data.getString(contactNameColumn);
-        String contactNumber = data.getString(contactNumberColumn);
+        String name = data.getString(contactNameColumn);
+        String number = data.getString(contactNumberColumn);
 
-        if (recipientDetailsTextView == null) {
-            recipientDetailsTextView =
-                    (TextView) getView().findViewById(R.id.text_view_recipient_details);
-        }
+        contactPhoneNumber = number;
+        contactName = name;
 
-        recipientDetailsTextView.setText(contactName + " at " + contactNumber);
+        setRecipientDetails();
     }
 
     @Override

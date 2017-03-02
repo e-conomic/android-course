@@ -11,7 +11,6 @@
 
     <TextView android:id="@+id/text_view_recipient_details"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TEST: HER SKAL KONTAKT STÅ"/>
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

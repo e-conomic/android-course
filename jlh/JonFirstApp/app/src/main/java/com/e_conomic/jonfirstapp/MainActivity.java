@@ -11,8 +11,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -103,14 +101,13 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
      * @param message The message to be shown. */
     public void sendMessage(String message) {
 
-        // If the display message fragment is visible show the message there.
-        if (displayMessageFragment != null) {
-            displayMessageFragment.updateMessage(message);
-        } else {
+        if (displayMessageFragment == null) {
             Log.w(MAIN_ACTIVITY_TAG,
                     "Trying to send message, but displayMessageFragment is null.");
+            return;
         }
 
+        displayMessageFragment.updateMessage(message);
         writeMessageToFile(message);
 
     }
