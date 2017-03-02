@@ -1,5 +1,7 @@
 package com.e_conomic.jonfirstapp;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -10,6 +12,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,6 +41,9 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
 
     // Maps with layout values.
     private Map<String, LinearLayout.LayoutParams> fragmentLayouts = new HashMap<>();
+
+    // Filenames
+    public final static String messageFilename = "messageFile";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,11 +106,32 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
         // If the display message fragment is visible show the message there.
         if (displayMessageFragment != null) {
             displayMessageFragment.updateMessage(message);
-            return;
+        } else {
+            Log.w(MAIN_ACTIVITY_TAG,
+                    "Trying to send message, but displayMessageFragment is null.");
         }
 
-        Log.w(MAIN_ACTIVITY_TAG, "Trying to send a message, but displayMessageFragment is null.");
+        writeMessageToFile(message);
 
+    }
+
+    /** Helper function to write the sent message to file.
+     *
+     * @param message The message to write. */
+    private void writeMessageToFile(String message) {
+
+        String date = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
+                .format(Calendar.getInstance().getTime());
+        FileOutputStream messageOutputStream;
+        String finalMessage = date + ":\n" + message + "\n";
+
+        try {
+            messageOutputStream = openFileOutput(messageFilename, Context.MODE_APPEND);
+            messageOutputStream.write(finalMessage.getBytes());
+            messageOutputStream.close();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
     }
 
     /** Called when the user clicks the show/hide button.
@@ -151,6 +182,12 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
             }
         }
 
+    }
+
+    /** Creates a new activity that shows all the previous messages, i.e. the contents of the
+     * file containing the previously written messages. */
+    public void showAllMessages() {
+        this.startActivity(new Intent(this, DisplayAllMessagesActivity.class));
     }
 
 }
