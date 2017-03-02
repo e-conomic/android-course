@@ -8,6 +8,10 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
@@ -21,7 +25,7 @@ import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     MainFragmentListener delegate;
 
@@ -31,12 +35,16 @@ public class MainFragment extends Fragment {
     // Request codes
     final static int PICK_CONTACT_REQUEST = 1;
 
-    // Contact keys
+    // Keys
     final static String PHONE_NUMBER = "phoneNumber";
     final static String DISPLAY_NAME = "displayName";
+    final static String CONTACT_DETAILS = "contactDetails";
 
     // Map with contact details. TODO: make this unambiguous?
     private Map<String, String> contactDetails = new HashMap<>();
+
+    // Loader manager
+    private LoaderManager loaderManager;
 
     // Views
     private EditText editMessage;
@@ -68,6 +76,8 @@ public class MainFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        loaderManager = getLoaderManager();
+        setupContactDetails();
     }
 
     @Override
@@ -98,38 +108,16 @@ public class MainFragment extends Fragment {
 
         if (requestCode == PICK_CONTACT_REQUEST && resultCode == RESULT_OK) {
 
-            if (recipientDetailsTextView == null) {
-                recipientDetailsTextView =
-                        (TextView) getView().findViewById(R.id.text_view_recipient_details);
-            }
-
             Uri contactUri = data.getData();
-            String[] contactProjection = {
-                    contactDetails.get(PHONE_NUMBER),
-                    contactDetails.get(DISPLAY_NAME)
-            };
 
-            Cursor cursor = getActivity().getContentResolver().query(
-                    contactUri, contactProjection, null, null, null);
+            Bundle cursorLoaderArgs = new Bundle();
+            cursorLoaderArgs.putString(CONTACT_DETAILS, contactUri.toString());
+            loaderManager.restartLoader(0, cursorLoaderArgs, this);
 
-            // Move cursor to first row.
-            cursor.moveToFirst();
-
-            // Get contact information.
-            int contactNameColumn = cursor.getColumnIndex(contactDetails.get(DISPLAY_NAME));
-            int contactNumberColumn = cursor.getColumnIndex(contactDetails.get(PHONE_NUMBER));
-
-            String contactName = cursor.getString(contactNameColumn);
-            String contactNumber = cursor.getString(contactNumberColumn);
-
-            cursor.close();
-
-            recipientDetailsTextView.setText(contactName + " at " + contactNumber);
-
-            // TODO: use cursorLoader.
         }
     }
 
+    /** Helper function that fills a hash map containing contact details mappings. */
     private void setupContactDetails() {
         contactDetails.put(PHONE_NUMBER, ContactsContract.CommonDataKinds.Phone.NUMBER);
         contactDetails.put(DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
@@ -213,7 +201,47 @@ public class MainFragment extends Fragment {
         return isDisplayMessageFragmentVisible;
     }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
+        // TODO: what to do here if args are null?
+        if (args == null) {
+            return null;
+        }
 
+        Uri contactUri = Uri.parse(args.getString(CONTACT_DETAILS));
+
+        String[] contactProjection = {
+                contactDetails.get(PHONE_NUMBER),
+                contactDetails.get(DISPLAY_NAME)
+        };
+
+        return new CursorLoader(getActivity(), contactUri, contactProjection, null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+        data.moveToFirst();
+
+        // Get contact information.
+        int contactNameColumn = data.getColumnIndex(contactDetails.get(DISPLAY_NAME));
+        int contactNumberColumn = data.getColumnIndex(contactDetails.get(PHONE_NUMBER));
+
+        String contactName = data.getString(contactNameColumn);
+        String contactNumber = data.getString(contactNumberColumn);
+
+        if (recipientDetailsTextView == null) {
+            recipientDetailsTextView =
+                    (TextView) getView().findViewById(R.id.text_view_recipient_details);
+        }
+
+        recipientDetailsTextView.setText(contactName + " at " + contactNumber);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        // Not doing anything here, but can't remove it!
+    }
 }
 
