@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -17,6 +18,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+
+import static android.Manifest.permission.SEND_SMS;
 
 
 public class MainActivity extends FragmentActivity implements MainFragment.MainFragmentListener {
@@ -48,6 +51,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setupFragments();
+        ActivityCompat.requestPermissions(this, new String[]{SEND_SMS},1);
     }
 
     /** Helper method that retrieves references to the fragments used in this activity and sets

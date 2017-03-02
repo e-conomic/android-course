@@ -11,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.telephony.SmsManager;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
