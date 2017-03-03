@@ -20,9 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import java.util.HashMap;
-import java.util.Map;
+import android.provider.ContactsContract.CommonDataKinds.Phone;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -45,13 +43,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     final static String ENTER_MESSAGE_FRAGMENT_TAG = "EnterMessageFragment";
 
     // Keys
-    final static String PHONE_NUMBER = "contactPhoneNumber";
-    final static String DISPLAY_NAME = "displayName";
-    final static String CONTACT_DETAILS = "phoneValues";
-    final static String PHONE_DIRECTORY_CONTENT_TYPE = "phoneDirectoryContentType";
-
-    // Map with phone values.
-    private Map<String, String> phoneValues = new HashMap<>();
+    final static String CONTACT_DETAILS = "contactDetails";
 
     // Layout parameters
     LinearLayout.LayoutParams recipientViewLayoutParams;
@@ -87,7 +79,6 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         loaderManager = getLoaderManager();
-        setupContactDetails();
         setupLayoutParams();
     }
 
@@ -133,14 +124,6 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
                 isRecipientAdded = true;
             }
         }
-    }
-
-    /** Helper method that fills a hash map containing contact details mappings. */
-    private void setupContactDetails() {
-        phoneValues.put(PHONE_NUMBER, ContactsContract.CommonDataKinds.Phone.NUMBER);
-        phoneValues.put(DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
-        phoneValues.put(PHONE_DIRECTORY_CONTENT_TYPE,
-                ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
     }
 
     /** Helper method that creates the layout parameters used in this fragment class.*/
@@ -226,7 +209,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     /** Creates a new activity that lets the user pick a contact to send the message to. */
     private void pickContact(){
         Intent pickContactIntent = new Intent(Intent.ACTION_PICK, Uri.parse("content://contacts"));
-        pickContactIntent.setType(phoneValues.get(PHONE_DIRECTORY_CONTENT_TYPE));
+        pickContactIntent.setType(Phone.CONTENT_TYPE);
         startActivityForResult(pickContactIntent, PICK_CONTACT_REQUEST);
     }
 
@@ -245,8 +228,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         Uri contactUri = Uri.parse(args.getString(CONTACT_DETAILS));
 
         String[] contactProjection = {
-                phoneValues.get(PHONE_NUMBER),
-                phoneValues.get(DISPLAY_NAME)
+                Phone.NUMBER,
+                Phone.DISPLAY_NAME
         };
 
         return new CursorLoader(getActivity(), contactUri, contactProjection, null, null, null);
@@ -258,8 +241,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         data.moveToFirst();
 
         // Get contact information.
-        int contactNameColumn = data.getColumnIndex(phoneValues.get(DISPLAY_NAME));
-        int contactNumberColumn = data.getColumnIndex(phoneValues.get(PHONE_NUMBER));
+        int contactNameColumn = data.getColumnIndex(Phone.DISPLAY_NAME);
+        int contactNumberColumn = data.getColumnIndex(Phone.NUMBER);
 
         String name = data.getString(contactNameColumn);
         String number = data.getString(contactNumberColumn);
