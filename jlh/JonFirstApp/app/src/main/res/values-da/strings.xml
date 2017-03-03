@@ -12,5 +12,7 @@
     <string name="your_message_history">Din besked historie:</string>
     <string name="sending_message_to">Sender besked til:</string>
     <string name="choose_recipient">Vælg modtager</string>
-    <string name="at_no">på</string>
+    <string name="at_no">" på "</string>
+    <string name="enter_message">Venligst indtast en besked</string>
+    <string name="ok">OK</string>
 </resources>

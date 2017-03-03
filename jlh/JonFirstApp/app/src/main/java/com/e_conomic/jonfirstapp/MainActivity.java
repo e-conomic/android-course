@@ -51,7 +51,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setupFragments();
-        ActivityCompat.requestPermissions(this, new String[]{SEND_SMS},1);
+        // Request permission to send SMS.
+        ActivityCompat.requestPermissions(this, new String[]{SEND_SMS}, 1);
     }
 
     /** Helper method that retrieves references to the fragments used in this activity and sets

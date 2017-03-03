@@ -12,6 +12,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.view.View;
@@ -40,14 +41,20 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     // Request codes
     final static int PICK_CONTACT_REQUEST = 1;
 
+    final static String MAIN_FRAGMENT_TAG = "MainFragment";
+    final static String ENTER_MESSAGE_FRAGMENT_TAG = "EnterMessageFragment";
+
     // Keys
     final static String PHONE_NUMBER = "contactPhoneNumber";
     final static String DISPLAY_NAME = "displayName";
     final static String CONTACT_DETAILS = "phoneValues";
     final static String PHONE_DIRECTORY_CONTENT_TYPE = "phoneDirectoryContentType";
 
-    // Map with phoneValues values. TODO: make the second type unambiguous?
+    // Map with phone values.
     private Map<String, String> phoneValues = new HashMap<>();
+
+    // Layout parameters
+    LinearLayout.LayoutParams recipientViewLayoutParams;
 
     // Views
     private EditText editMessage;
@@ -71,7 +78,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
             delegate = (MainFragmentListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString()
-                    + " must implement sendMessage and showHide methods.");
+                    + " must implement sendMessage, showHide and showAllMessages methods.");
         }
     }
 
@@ -81,13 +88,14 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         setRetainInstance(true);
         loaderManager = getLoaderManager();
         setupContactDetails();
+        setupLayoutParams();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_main, container, true);
+        return inflater.inflate(R.layout.fragment_main, container, false);
     }
 
     @Override
@@ -115,17 +123,19 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
             Bundle cursorLoaderArgs = new Bundle();
             cursorLoaderArgs.putString(CONTACT_DETAILS, contactUri.toString());
+
+            // Start new cursorLoader or restart an old one.
             loaderManager.restartLoader(0, cursorLoaderArgs, this);
 
+            // Avoid creating multiple recipient views.
             if (!isRecipientAdded) {
                 addRecipientView((ViewGroup) getView());
                 isRecipientAdded = true;
             }
-
         }
     }
 
-    /** Helper function that fills a hash map containing contact details mappings. */
+    /** Helper method that fills a hash map containing contact details mappings. */
     private void setupContactDetails() {
         phoneValues.put(PHONE_NUMBER, ContactsContract.CommonDataKinds.Phone.NUMBER);
         phoneValues.put(DISPLAY_NAME, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
@@ -133,7 +143,13 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
                 ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
     }
 
-    /** Helper function that sets the needed button listeners and their corresponding onClick
+    /** Helper method that creates the layout parameters used in this fragment class.*/
+    private void setupLayoutParams() {
+        recipientViewLayoutParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    }
+
+    /** Helper method that sets the needed button listeners and their corresponding onClick
      * method, i.e. handle the button clicks. */
     private void setButtonListeners() {
 
@@ -141,6 +157,13 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
             @Override
             public void onClick(View view) {
                 String message = editMessage.getText().toString();
+
+                if (message.length() <= 0) {
+                    EnterMessageDialogFragment dialog = new EnterMessageDialogFragment();
+                    dialog.show(getFragmentManager(), ENTER_MESSAGE_FRAGMENT_TAG);
+                    return;
+                }
+
                 delegate.sendMessage(message);
                 editMessage.setText("");
 
@@ -194,10 +217,10 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         View recipientViewGroup =
                 layoutInflater.inflate(R.layout.recipient_layout, rootView, false);
 
-        LinearLayout.LayoutParams recipientLayoutParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        rootView.addView(recipientViewGroup, 1, recipientViewLayoutParams);
 
-        rootView.addView(recipientViewGroup, 1, recipientLayoutParams);
+        recipientDetailsTextView =
+                (TextView) getView().findViewById(R.id.text_view_recipient_details);
     }
 
     /** Creates a new activity that lets the user pick a contact to send the message to. */
@@ -212,21 +235,9 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         return isDisplayMessageFragmentVisible;
     }
 
-    /** Sets the text of the text view that displays the recipient. */
-    private void setRecipientDetails() {
-
-        if (recipientDetailsTextView == null) {
-            recipientDetailsTextView =
-                    (TextView) getView().findViewById(R.id.text_view_recipient_details);
-        }
-
-        recipientDetailsTextView.setText(contactName + " at " + contactPhoneNumber);
-    }
-
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        // TODO: what to do here if args are null?
         if (args == null) {
             return null;
         }
@@ -256,12 +267,23 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         contactPhoneNumber = number;
         contactName = name;
 
-        setRecipientDetails();
+        setRecipientDetailsView();
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         // Not doing anything here, but can't remove it!
+    }
+
+    /** Helper method that sets the text of the text view that displays the recipient. */
+    private void setRecipientDetailsView() {
+
+        if (recipientDetailsTextView == null) {
+            Log.w(MAIN_FRAGMENT_TAG, "Trying to add recipient details to a text view that is null");
+            return;
+        }
+
+        recipientDetailsTextView.setText(contactName + getString(R.string.at_no) + contactPhoneNumber);
     }
 }
 
