@@ -241,14 +241,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         data.moveToFirst();
 
         // Get contact information.
-        int contactNameColumn = data.getColumnIndex(Phone.DISPLAY_NAME);
-        int contactNumberColumn = data.getColumnIndex(Phone.NUMBER);
-
-        String name = data.getString(contactNameColumn);
-        String number = data.getString(contactNumberColumn);
-
-        contactPhoneNumber = number;
-        contactName = name;
+        contactPhoneNumber = data.getString(data.getColumnIndex(Phone.DISPLAY_NAME));
+        contactName = data.getString(data.getColumnIndex(Phone.NUMBER));
 
         setRecipientDetailsView();
     }
