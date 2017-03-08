@@ -14,4 +14,5 @@
     <string name="at_no">" at "</string>
     <string name="enter_message">Please enter a message</string>
     <string name="ok">OK</string>
+    <string name="SMSExplanation">You need to grant this app SMS permission in order for it to send a text message.</string>
 </resources>

@@ -2,13 +2,17 @@ package com.e_conomic.jonfirstapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.telephony.SmsManager;
@@ -22,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 
+import static android.Manifest.permission.SEND_SMS;
 import static android.app.Activity.RESULT_OK;
 
 public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -35,12 +40,15 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     private String contactPhoneNumber = null;
     private String contactName = null;
+    private String message;
 
     // Request codes
     final static int PICK_CONTACT_REQUEST = 1;
+    public final static int SEND_SMS_PERMISSION_REQUEST = 2;
 
     final static String MAIN_FRAGMENT_TAG = "MainFragment";
     final static String ENTER_MESSAGE_FRAGMENT_TAG = "EnterMessageFragment";
+    final static String SMS_EXPLANATION_FRAGMENT_TAG ="SMSExplanationFragment";
 
     // Keys
     final static String CONTACT_DETAILS = "contactDetails";
@@ -139,7 +147,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String message = editMessage.getText().toString();
+                message = editMessage.getText().toString();
 
                 if (message.length() <= 0) {
                     EnterMessageDialogFragment dialog = new EnterMessageDialogFragment();
@@ -147,15 +155,14 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
                     return;
                 }
 
-                delegate.sendMessage(message);
-                editMessage.setText("");
-
                 if (contactPhoneNumber == null) {
                     return;
                 }
+                
+                delegate.sendMessage(message);
+                editMessage.setText("");
 
-                SmsManager smsManager = SmsManager.getDefault();
-                smsManager.sendTextMessage(contactPhoneNumber, null, message, null, null);
+                requestSMSPermission();
 
             }
         });
@@ -182,6 +189,22 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
                 pickContact();
             }
         });
+    }
+
+    public void requestSMSPermission() {
+
+        if (ContextCompat.checkSelfPermission(getActivity(), SEND_SMS)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), SEND_SMS)) {
+                // Show explanation.
+                SMSPermissionExplanationFragment dialog = new SMSPermissionExplanationFragment();
+                dialog.show(getFragmentManager(), SMS_EXPLANATION_FRAGMENT_TAG);
+            } else {
+                // Request permission.
+                ActivityCompat.requestPermissions(getActivity(), new String[]{SEND_SMS}, SEND_SMS_PERMISSION_REQUEST);
+            }
+        }
     }
 
     /** Sets the text on the show/hide button. */

@@ -2,12 +2,15 @@ package com.e_conomic.jonfirstapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,9 +21,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-
-import static android.Manifest.permission.SEND_SMS;
-
 
 public class MainActivity extends FragmentActivity implements MainFragment.MainFragmentListener {
 
@@ -36,6 +36,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
 
     // Fragments
     private DisplayMessageFragment displayMessageFragment = null;
+    private MainFragment mainFragment = null;
 
     // Views
     private View displayMessageFragmentContainer = null;
@@ -51,8 +52,17 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setupFragments();
-        // Request permission to send SMS.
-        ActivityCompat.requestPermissions(this, new String[]{SEND_SMS}, 1);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        if (mainFragment == null) {
+            Log.w(MAIN_ACTIVITY_TAG, "Main Fragment is null when trying to update permissions");
+            return;
+        }
+
+        mainFragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     /** Helper method that retrieves references to the fragments used in this activity and sets
@@ -72,7 +82,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
 
         FragmentManager fragmentManager = getSupportFragmentManager();
 
-        MainFragment mainFragment = (MainFragment)
+        mainFragment = (MainFragment)
                 fragmentManager.findFragmentById(R.id.fragment_main);
 
         // Find the container that holds the DisplayMessageFragment.
