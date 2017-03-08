@@ -133,7 +133,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
             }
         }
     }
-
+    
     /** Helper method that creates the layout parameters used in this fragment class.*/
     private void setupLayoutParams() {
         recipientViewLayoutParams = new LinearLayout.LayoutParams(
@@ -147,23 +147,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                message = editMessage.getText().toString();
-
-                if (message.length() <= 0) {
-                    EnterMessageDialogFragment dialog = new EnterMessageDialogFragment();
-                    dialog.show(getFragmentManager(), ENTER_MESSAGE_FRAGMENT_TAG);
-                    return;
-                }
-
-                if (contactPhoneNumber == null) {
-                    return;
-                }
-                
-                delegate.sendMessage(message);
-                editMessage.setText("");
-
-                requestSMSPermission();
-
+                sendMessage();
             }
         });
 
@@ -191,20 +175,48 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         });
     }
 
-    public void requestSMSPermission() {
+    /** Sends the user entered message if permission was granted. Requests the permission if the app
+     * does not already have it. Also shows a dialog if now message was entered. */
+    private void sendMessage() {
+
+        message = editMessage.getText().toString();
+
+        if (message.length() <= 0) {
+            EnterMessageDialogFragment dialog = new EnterMessageDialogFragment();
+            dialog.show(getFragmentManager(), ENTER_MESSAGE_FRAGMENT_TAG);
+            return;
+        }
+
+        // If the user does not wish to send an SMS.
+        if (contactPhoneNumber == null) {
+            return;
+        }
+
+        delegate.sendMessage(message);
+        editMessage.setText("");
 
         if (ContextCompat.checkSelfPermission(getActivity(), SEND_SMS)
                 != PackageManager.PERMISSION_GRANTED) {
-
+            // SMS permission was not granted. Show explanation or request permission.
             if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), SEND_SMS)) {
                 // Show explanation.
                 SMSPermissionExplanationFragment dialog = new SMSPermissionExplanationFragment();
                 dialog.show(getFragmentManager(), SMS_EXPLANATION_FRAGMENT_TAG);
             } else {
                 // Request permission.
-                ActivityCompat.requestPermissions(getActivity(), new String[]{SEND_SMS}, SEND_SMS_PERMISSION_REQUEST);
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{SEND_SMS}, SEND_SMS_PERMISSION_REQUEST);
             }
+        } else {
+            // Permission was granted. Send SMS.
+            sendSMS();
         }
+    }
+
+    /** Sends the user entered message to the chosen contact. */
+    private void sendSMS() {
+        SmsManager smsManager = SmsManager.getDefault();
+        smsManager.sendTextMessage(contactPhoneNumber, null, message, null, null);
     }
 
     /** Sets the text on the show/hide button. */

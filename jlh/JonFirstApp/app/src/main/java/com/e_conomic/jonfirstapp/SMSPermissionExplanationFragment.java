@@ -20,7 +20,8 @@ public class SMSPermissionExplanationFragment extends DialogFragment {
         dialogBuilder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                ActivityCompat.requestPermissions(getActivity(), new String[]{SEND_SMS}, MainFragment.SEND_SMS_PERMISSION_REQUEST);
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{SEND_SMS}, MainFragment.SEND_SMS_PERMISSION_REQUEST);
             }
         });
 

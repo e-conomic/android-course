@@ -2,15 +2,12 @@ package com.e_conomic.jonfirstapp;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,14 +52,17 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
 
         if (mainFragment == null) {
             Log.w(MAIN_ACTIVITY_TAG, "Main Fragment is null when trying to update permissions");
             return;
         }
 
-        mainFragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == MainFragment.SEND_SMS_PERMISSION_REQUEST) {
+            mainFragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
     }
 
     /** Helper method that retrieves references to the fragments used in this activity and sets
