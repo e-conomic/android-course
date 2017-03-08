@@ -2,6 +2,7 @@ package com.e_conomic.jonfirstapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -60,8 +61,13 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
             return;
         }
 
-        if (requestCode == MainFragment.SEND_SMS_PERMISSION_REQUEST) {
-            mainFragment.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+            case MainFragment.SEND_SMS_PERMISSION_REQUEST: {
+                if (grantResults.length > 0 &&
+                        grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    mainFragment.sendSMS();
+                }
+            }
         }
     }
 

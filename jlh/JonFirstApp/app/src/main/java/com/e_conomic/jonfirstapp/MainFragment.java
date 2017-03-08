@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -133,7 +132,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
             }
         }
     }
-    
+
     /** Helper method that creates the layout parameters used in this fragment class.*/
     private void setupLayoutParams() {
         recipientViewLayoutParams = new LinearLayout.LayoutParams(
@@ -213,12 +212,6 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         }
     }
 
-    /** Sends the user entered message to the chosen contact. */
-    private void sendSMS() {
-        SmsManager smsManager = SmsManager.getDefault();
-        smsManager.sendTextMessage(contactPhoneNumber, null, message, null, null);
-    }
-
     /** Sets the text on the show/hide button. */
     private void setButtonText() {
         if (isDisplayMessageFragmentVisible) {
@@ -246,6 +239,12 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         Intent pickContactIntent = new Intent(Intent.ACTION_PICK, Uri.parse("content://contacts"));
         pickContactIntent.setType(Phone.CONTENT_TYPE);
         startActivityForResult(pickContactIntent, PICK_CONTACT_REQUEST);
+    }
+
+    /** Sends the user entered message to the chosen contact. */
+    public void sendSMS() {
+        SmsManager smsManager = SmsManager.getDefault();
+        smsManager.sendTextMessage(contactPhoneNumber, null, message, null, null);
     }
 
     /** Returns true if the fragment that displays the message is visible. */
