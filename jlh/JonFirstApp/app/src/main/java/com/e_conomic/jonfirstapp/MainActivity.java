@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -11,14 +12,14 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+
+import static android.Manifest.permission.SEND_SMS;
 
 
 public class MainActivity extends FragmentActivity implements MainFragment.MainFragmentListener {
@@ -39,8 +40,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
     // Views
     private View displayMessageFragmentContainer = null;
 
-    // Maps with layout values.
-    private Map<String, LinearLayout.LayoutParams> fragmentLayouts = new HashMap<>();
+    // Map with layout values.
+    private Map<String, LinearLayout.LayoutParams> layouts = new HashMap<>();
 
     // Filenames
     public final static String messageFilename = "messageFile";
@@ -50,6 +51,8 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setupFragments();
+        // Request permission to send SMS.
+        ActivityCompat.requestPermissions(this, new String[]{SEND_SMS}, 1);
     }
 
     /** Helper method that retrieves references to the fragments used in this activity and sets
@@ -58,13 +61,13 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
     private void setupFragments() {
 
         // Set fragment layout values.
-        fragmentLayouts.put(SHOW_FRAGMENT_LAYOUT,
+        layouts.put(SHOW_FRAGMENT_LAYOUT,
                 new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT, (float) 0.5));
-        fragmentLayouts.put(LANDSCAPE_HIDE_FRAGMENT_LAYOUT,
+        layouts.put(LANDSCAPE_HIDE_FRAGMENT_LAYOUT,
                 new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT,
                         (float) 0.5));
-        fragmentLayouts.put(PORTRAIT_HIDE_FRAGMENT_LAYOUT,
+        layouts.put(PORTRAIT_HIDE_FRAGMENT_LAYOUT,
                 new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, (float) 0.5));
 
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -81,7 +84,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
         if (mainFragment.isDisplayMessageFragmentVisible()) {
             // Set width of fragment layout container to fill half the screen.
             displayMessageFragmentContainer.setLayoutParams(
-                    fragmentLayouts.get(SHOW_FRAGMENT_LAYOUT));
+                    layouts.get(SHOW_FRAGMENT_LAYOUT));
         }
 
         // Find the DisplayMessageFragment on restart.
@@ -103,14 +106,13 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
      * @param message The message to be shown. */
     public void sendMessage(String message) {
 
-        // If the display message fragment is visible show the message there.
-        if (displayMessageFragment != null) {
-            displayMessageFragment.updateMessage(message);
-        } else {
+        if (displayMessageFragment == null) {
             Log.w(MAIN_ACTIVITY_TAG,
                     "Trying to send message, but displayMessageFragment is null.");
+            return;
         }
 
+        displayMessageFragment.updateMessage(message);
         writeMessageToFile(message);
 
     }
@@ -164,7 +166,7 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
 
             // Set size of displayMessageFragment layout container to fill half the screen.
             displayMessageFragmentContainer.setLayoutParams(
-                    fragmentLayouts.get(SHOW_FRAGMENT_LAYOUT));
+                    layouts.get(SHOW_FRAGMENT_LAYOUT));
 
         } else {
             ft.hide(displayMessageFragment).commitNow();
@@ -175,10 +177,10 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
             if (displayOrientation == LANDSCAPE) {
 
                 displayMessageFragmentContainer.setLayoutParams(
-                        fragmentLayouts.get(LANDSCAPE_HIDE_FRAGMENT_LAYOUT));
+                        layouts.get(LANDSCAPE_HIDE_FRAGMENT_LAYOUT));
             } else {
                 displayMessageFragmentContainer.setLayoutParams(
-                        fragmentLayouts.get(PORTRAIT_HIDE_FRAGMENT_LAYOUT));
+                        layouts.get(PORTRAIT_HIDE_FRAGMENT_LAYOUT));
             }
         }
 
@@ -189,5 +191,4 @@ public class MainActivity extends FragmentActivity implements MainFragment.MainF
     public void showAllMessages() {
         this.startActivity(new Intent(this, DisplayAllMessagesActivity.class));
     }
-
 }

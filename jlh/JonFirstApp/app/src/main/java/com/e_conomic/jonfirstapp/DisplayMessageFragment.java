@@ -84,7 +84,6 @@ public class DisplayMessageFragment extends Fragment {
         }
 
         displayMessageTextView.setText(message);
-
     }
 
 }

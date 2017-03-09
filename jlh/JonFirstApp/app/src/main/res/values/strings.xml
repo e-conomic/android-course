@@ -9,4 +9,9 @@
     <string name="no_prev_message">No previous message</string>
     <string name="show_all_messages">Show all messages</string>
     <string name="your_message_history">You message history:</string>
+    <string name="sending_message_to">Sending message to:</string>
+    <string name="choose_recipient">Choose recipient</string>
+    <string name="at_no">" at "</string>
+    <string name="enter_message">Please enter a message</string>
+    <string name="ok">OK</string>
 </resources>
