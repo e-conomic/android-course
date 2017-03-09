@@ -186,13 +186,12 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
             return;
         }
 
-        // If the user does not wish to send an SMS.
-        if (contactPhoneNumber == null) {
-            return;
-        }
-
         delegate.sendMessage(message);
         editMessage.setText("");
+
+        if (phoneNumberHasNotBeenEntered()) {
+            return;
+        }
 
         if (ContextCompat.checkSelfPermission(getActivity(), SEND_SMS)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -210,6 +209,11 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
             // Permission was granted. Send SMS.
             sendSMS();
         }
+    }
+
+    /** Checks if the user has added a contact with a phone number. */
+    private boolean phoneNumberHasNotBeenEntered() {
+        return contactPhoneNumber == null;
     }
 
     /** Sets the text on the show/hide button. */
@@ -276,8 +280,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         data.moveToFirst();
 
         // Get contact information.
-        contactPhoneNumber = data.getString(data.getColumnIndex(Phone.DISPLAY_NAME));
-        contactName = data.getString(data.getColumnIndex(Phone.NUMBER));
+        contactPhoneNumber = data.getString(data.getColumnIndex(Phone.NUMBER));
+        contactName = data.getString(data.getColumnIndex(Phone.DISPLAY_NAME));
 
         setRecipientDetailsView();
     }
