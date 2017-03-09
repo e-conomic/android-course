@@ -2,13 +2,16 @@ package com.e_conomic.jonfirstapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.telephony.SmsManager;
@@ -22,6 +25,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
 
+import static android.Manifest.permission.SEND_SMS;
 import static android.app.Activity.RESULT_OK;
 
 public class MainFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -35,12 +39,15 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
     private String contactPhoneNumber = null;
     private String contactName = null;
+    private String message;
 
     // Request codes
     final static int PICK_CONTACT_REQUEST = 1;
+    public final static int SEND_SMS_PERMISSION_REQUEST = 2;
 
     final static String MAIN_FRAGMENT_TAG = "MainFragment";
     final static String ENTER_MESSAGE_FRAGMENT_TAG = "EnterMessageFragment";
+    final static String SMS_EXPLANATION_FRAGMENT_TAG ="SMSExplanationFragment";
 
     // Keys
     final static String CONTACT_DETAILS = "contactDetails";
@@ -139,24 +146,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String message = editMessage.getText().toString();
-
-                if (message.length() <= 0) {
-                    EnterMessageDialogFragment dialog = new EnterMessageDialogFragment();
-                    dialog.show(getFragmentManager(), ENTER_MESSAGE_FRAGMENT_TAG);
-                    return;
-                }
-
-                delegate.sendMessage(message);
-                editMessage.setText("");
-
-                if (contactPhoneNumber == null) {
-                    return;
-                }
-
-                SmsManager smsManager = SmsManager.getDefault();
-                smsManager.sendTextMessage(contactPhoneNumber, null, message, null, null);
-
+                sendMessage();
             }
         });
 
@@ -182,6 +172,48 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
                 pickContact();
             }
         });
+    }
+
+    /** Sends the user entered message if permission was granted. Requests the permission if the app
+     * does not already have it. Also shows a dialog if now message was entered. */
+    private void sendMessage() {
+
+        message = editMessage.getText().toString();
+
+        if (message.isEmpty()) {
+            EnterMessageDialogFragment dialog = new EnterMessageDialogFragment();
+            dialog.show(getFragmentManager(), ENTER_MESSAGE_FRAGMENT_TAG);
+            return;
+        }
+
+        delegate.sendMessage(message);
+        editMessage.setText("");
+
+        if (!phoneNumberHasBeenEntered()) {
+            return;
+        }
+
+        if (ContextCompat.checkSelfPermission(getActivity(), SEND_SMS)
+                != PackageManager.PERMISSION_GRANTED) {
+            // SMS permission was not granted. Show explanation or request permission.
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), SEND_SMS)) {
+                // Show explanation.
+                SMSPermissionExplanationFragment dialog = new SMSPermissionExplanationFragment();
+                dialog.show(getFragmentManager(), SMS_EXPLANATION_FRAGMENT_TAG);
+            } else {
+                // Request permission.
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{SEND_SMS}, SEND_SMS_PERMISSION_REQUEST);
+            }
+        } else {
+            // Permission was granted. Send SMS.
+            sendSMS();
+        }
+    }
+
+    /** Checks if the user has added a contact with a phone number. */
+    private boolean phoneNumberHasBeenEntered() {
+        return contactPhoneNumber != null;
     }
 
     /** Sets the text on the show/hide button. */
@@ -213,6 +245,12 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         startActivityForResult(pickContactIntent, PICK_CONTACT_REQUEST);
     }
 
+    /** Sends the user entered message to the chosen contact. */
+    public void sendSMS() {
+        SmsManager smsManager = SmsManager.getDefault();
+        smsManager.sendTextMessage(contactPhoneNumber, null, message, null, null);
+    }
+
     /** Returns true if the fragment that displays the message is visible. */
     public Boolean isDisplayMessageFragmentVisible() {
         return isDisplayMessageFragmentVisible;
@@ -242,8 +280,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         data.moveToFirst();
 
         // Get contact information.
-        contactPhoneNumber = data.getString(data.getColumnIndex(Phone.DISPLAY_NAME));
-        contactName = data.getString(data.getColumnIndex(Phone.NUMBER));
+        contactPhoneNumber = data.getString(data.getColumnIndex(Phone.NUMBER));
+        contactName = data.getString(data.getColumnIndex(Phone.DISPLAY_NAME));
 
         setRecipientDetailsView();
     }
