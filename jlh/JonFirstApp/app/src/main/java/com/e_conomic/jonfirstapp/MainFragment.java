@@ -222,6 +222,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
         if (args == null) {
+            Log.w(MAIN_FRAGMENT_TAG, "Arguments are null when trying to load");
             return null;
         }
 
