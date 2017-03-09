@@ -180,7 +180,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
 
         message = editMessage.getText().toString();
 
-        if (message.length() <= 0) {
+        if (message.isEmpty()) {
             EnterMessageDialogFragment dialog = new EnterMessageDialogFragment();
             dialog.show(getFragmentManager(), ENTER_MESSAGE_FRAGMENT_TAG);
             return;
@@ -189,7 +189,7 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
         delegate.sendMessage(message);
         editMessage.setText("");
 
-        if (phoneNumberHasNotBeenEntered()) {
+        if (!phoneNumberHasBeenEntered()) {
             return;
         }
 
@@ -212,8 +212,8 @@ public class MainFragment extends Fragment implements LoaderManager.LoaderCallba
     }
 
     /** Checks if the user has added a contact with a phone number. */
-    private boolean phoneNumberHasNotBeenEntered() {
-        return contactPhoneNumber == null;
+    private boolean phoneNumberHasBeenEntered() {
+        return contactPhoneNumber != null;
     }
 
     /** Sets the text on the show/hide button. */
