@@ -13,13 +13,8 @@ import com.squareup.picasso.Picasso
 import ctx
 import org.jetbrains.anko.find
 
-class ForecastListAdapter(val weekForecast: ForecastList, val itemClick: ForecastListAdapter.OnItemClickListener) :
-        // Custom ViewHolder implementation?
+class ForecastListAdapter(val weekForecast: ForecastList, val itemClick: (Forecast) -> Unit) :
         RecyclerView.Adapter<ForecastListAdapter.ViewHolder>() {
-
-    interface OnItemClickListener {
-        operator fun invoke(forecast: Forecast)
-    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder? {
         val view = LayoutInflater.from(parent.ctx).inflate(R.layout.item_forecast, parent, false)
@@ -32,7 +27,7 @@ class ForecastListAdapter(val weekForecast: ForecastList, val itemClick: Forecas
 
     override fun getItemCount(): Int = weekForecast.size()
 
-    class ViewHolder(view: View, val itemClick: OnItemClickListener) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(view: View, val itemClick: (Forecast) -> Unit) : RecyclerView.ViewHolder(view) {
 
         private val iconView: ImageView
         private val dateView: TextView
@@ -55,7 +50,6 @@ class ForecastListAdapter(val weekForecast: ForecastList, val itemClick: Forecas
                 descriptionView.text = description
                 maxTemperatureView.text = high.toString()
                 minTemperatureView.text = low.toString()
-                // TODO Why itemView? (Field in RecyclerView.ViewHolder)
                 itemView.setOnClickListener { itemClick(this) }
             }
         }
