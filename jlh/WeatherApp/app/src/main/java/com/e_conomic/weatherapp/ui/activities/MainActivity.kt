@@ -1,9 +1,10 @@
-package com.e_conomic.weatherapp
+package com.e_conomic.weatherapp.ui.activities
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import com.e_conomic.weatherapp.domain.commands.RequestforecastCommand
+import com.e_conomic.weatherapp.R
+import com.e_conomic.weatherapp.domain.commands.RequestForecastCommand
 import com.e_conomic.weatherapp.ui.ForecastListAdapter
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.*
@@ -17,9 +18,9 @@ class MainActivity : AppCompatActivity() {
         forecastList.layoutManager = LinearLayoutManager(this)
 
         doAsync {
-            val result = RequestforecastCommand("94043").execute()
+            val forecastListResult = RequestForecastCommand("2618425").execute()
             uiThread {
-                forecastList.adapter = ForecastListAdapter(result) {toast(it.date)}
+                forecastList.adapter = ForecastListAdapter(forecastListResult) {toast(it.date)}
             }
         }
     }
