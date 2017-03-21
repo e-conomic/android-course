@@ -11,6 +11,8 @@ import org.jetbrains.anko.*
 
 class MainActivity : AppCompatActivity() {
 
+    val COPENHAGEN_ID = "2618425"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -18,9 +20,11 @@ class MainActivity : AppCompatActivity() {
         forecastList.layoutManager = LinearLayoutManager(this)
 
         doAsync {
-            val forecastListResult = RequestForecastCommand("2618425").execute()
+            val forecastListResult = RequestForecastCommand(COPENHAGEN_ID).execute()
             uiThread {
-                forecastList.adapter = ForecastListAdapter(forecastListResult) {toast(it.date)}
+                forecastList.adapter = ForecastListAdapter(forecastListResult) {
+                    forecast -> toast(forecast.date)
+                }
             }
         }
     }

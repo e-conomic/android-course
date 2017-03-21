@@ -9,19 +9,34 @@ import com.e_conomic.weatherapp.domain.model.Forecast as ModelForecast
 
 class ForecastDataMapper {
 
-    fun convertFromDataModel(forecast: ForecastResult): ForecastList {
+    companion object {
+        val NO_ICON = "ForecastDataMapper:noIcon"
+        val NO_DESCRIPTION = "ForecastDataMapper:noDescription"
+    }
+
+    fun convertToForecastModel(forecast: ForecastResult): ForecastList {
         return ForecastList(forecast.city.name, forecast.city.country,
-                convertForecastListToDomain(forecast.list))
+                convertToModelForecastList(forecast.list))
     }
 
-    private fun convertForecastListToDomain(forecastList: List<Forecast>): List<ModelForecast> {
-        return forecastList.map { convertForecastItemToDomain(it) }
+    private fun convertToModelForecastList(forecastList: List<Forecast>): List<ModelForecast> {
+        return forecastList.map { forecast -> convertToModelForecast(forecast) }
     }
 
-    private fun convertForecastItemToDomain(forecast: Forecast): ModelForecast {
-        return ModelForecast(convertDate(forecast.dt), forecast.weather[0].description,
-                forecast.temp.max.toInt(), forecast.temp.min.toInt(),
-                generateIconUrl(forecast.weather[0].icon))
+    private fun convertToModelForecast(forecast: Forecast): ModelForecast {
+        val description: String
+        val iconUrl: String
+
+        if (forecast.weather.isEmpty()) {
+            description = NO_DESCRIPTION
+            iconUrl = NO_ICON
+        } else {
+            description = forecast.weather[0].description
+            iconUrl = generateIconUrl(forecast.weather[0].icon)
+        }
+
+        return ModelForecast(convertDate(forecast.dt), description,
+                forecast.temp.max.toInt(), forecast.temp.min.toInt(), iconUrl)
     }
 
     private fun generateIconUrl(iconCode: String) = "http://openweathermap.org/img/w/$iconCode.png"
