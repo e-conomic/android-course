@@ -1,8 +1,10 @@
 package com.e_conomic.weatherapp.ui.activities
 
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import com.e_conomic.weatherapp.App
 import com.e_conomic.weatherapp.R
 import com.e_conomic.weatherapp.domain.commands.RequestForecastCommand
 import com.e_conomic.weatherapp.ui.ForecastListAdapter
@@ -22,8 +24,10 @@ class MainActivity : AppCompatActivity() {
         doAsync {
             val forecastListResult = RequestForecastCommand(COPENHAGEN_ID).execute()
             uiThread {
-                forecastList.adapter = ForecastListAdapter(forecastListResult) {
-                    forecast -> toast(forecast.date)
+                forecastList.adapter = ForecastListAdapter(forecastListResult) { forecast ->
+                    val intent = Intent(this@MainActivity, DetailActivity::class.java) // MainActivity's this
+                    intent.putExtra(DetailActivity.CITY_NAME, forecastListResult.city)
+                    startActivity(intent)
                 }
             }
         }
