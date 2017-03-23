@@ -9,6 +9,7 @@ import com.e_conomic.weatherapp.R
 import com.e_conomic.weatherapp.domain.mappers.ForecastDataMapper
 import com.e_conomic.weatherapp.domain.model.Forecast
 import com.e_conomic.weatherapp.domain.model.ForecastList
+import com.e_conomic.weatherapp.extensions.toDateString
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.item_forecast.view.*
 
@@ -39,7 +40,7 @@ class ForecastListAdapter(val weekForecast: ForecastList, val itemClick: (Foreca
                     Picasso.with(itemView.context).load(iconUrl).into(itemView.icon)
                 }
 
-                itemView.date.text = date
+                itemView.date.text = date.toDateString()
                 itemView.description.text = description ?:
                         App.instance.resources.getString(R.string.default_weather_description)
                 itemView.maxTemperature.text = high.toString()
