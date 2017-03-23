@@ -9,6 +9,8 @@
     android:paddingRight="@dimen/weather_item_horizontal_spacing"
     android:paddingTop="@dimen/weather_item_vertical_spacing">
 
+    <include layout="@layout/toolbar"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
