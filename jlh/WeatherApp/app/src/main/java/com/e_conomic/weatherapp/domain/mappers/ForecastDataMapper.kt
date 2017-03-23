@@ -9,11 +9,6 @@ import com.e_conomic.weatherapp.domain.model.Forecast as ModelForecast
 
 class ForecastDataMapper {
 
-    companion object {
-        val NO_ICON = "ForecastDataMapper:noIcon"
-        val NO_DESCRIPTION = "ForecastDataMapper:noDescription"
-    }
-
     fun convertToForecastModel(forecast: ForecastResult): ForecastList {
         return ForecastList(forecast.city.name, forecast.city.country,
                 convertToModelForecastList(forecast.list))
@@ -24,12 +19,12 @@ class ForecastDataMapper {
     }
 
     private fun convertToModelForecast(forecast: Forecast): ModelForecast {
-        val description: String
-        val iconUrl: String
+        val description: String?
+        val iconUrl: String?
 
         if (forecast.weather.isEmpty()) {
-            description = NO_DESCRIPTION
-            iconUrl = NO_ICON
+            description = null
+            iconUrl = null
         } else {
             description = forecast.weather[0].description
             iconUrl = generateIconUrl(forecast.weather[0].icon)
