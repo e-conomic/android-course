@@ -19,13 +19,10 @@ class ForecastDataMapper {
     }
 
     private fun convertToModelForecast(forecast: Forecast): ModelForecast {
-        val description: String?
-        val iconUrl: String?
+        var description: String? = null
+        var iconUrl: String? = null
 
-        if (forecast.weather.isEmpty()) {
-            description = null
-            iconUrl = null
-        } else {
+        if (!forecast.weather.isEmpty()) {
             description = forecast.weather[0].description
             iconUrl = generateIconUrl(forecast.weather[0].icon)
         }
