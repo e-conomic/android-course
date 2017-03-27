@@ -41,3 +41,5 @@ captures/
 
 # Desktop Services Store files. Metadata for the Finder application.
 .DS_STORE
+
+/denys
