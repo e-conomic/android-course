@@ -3,9 +3,6 @@ package com.e_conomic.weatherapp.domain.mappers
 import com.e_conomic.weatherapp.data.Forecast
 import com.e_conomic.weatherapp.data.ForecastResult
 import com.e_conomic.weatherapp.domain.model.ForecastList
-import com.e_conomic.weatherapp.extensions.toDateString
-import java.text.DateFormat
-import java.util.*
 import com.e_conomic.weatherapp.domain.model.Forecast as ModelForecast
 
 class ForecastDataMapper {

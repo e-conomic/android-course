@@ -1,9 +1,7 @@
 package com.e_conomic.weatherapp.ui.activities
 
-import android.graphics.Color
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.appcompat.R.attr.color
 import android.widget.TextView
 import com.e_conomic.weatherapp.R
 import com.e_conomic.weatherapp.domain.model.Forecast
@@ -24,7 +22,7 @@ class DetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
         title = intent.getStringExtra(FORECAST_CITY_EXTRA_KEY)
-        bindForecast(intent.getSerializableExtra(FORECAST_EXTRA_KEY)as Forecast)
+        bindForecast(intent.getSerializableExtra(FORECAST_EXTRA_KEY) as Forecast)
     }
 
     private fun bindForecast(forecast: Forecast): Unit {
@@ -37,16 +35,16 @@ class DetailActivity : AppCompatActivity() {
 
     }
 
-    private fun bindWeather(vararg views: Pair<Int, TextView>) = views.forEach{
+    private fun bindWeather(vararg views: Pair<Int, TextView>) = views.forEach {
         (temperature, view) ->
-        view.text = temperature.toString()
-        view.setTextColor(color(
-                when (temperature) {
-                    in -50..0 -> android.R.color.holo_blue_dark
-                    in 0..10 -> android.R.color.holo_blue_bright
-                    in 10..25 -> android.R.color.holo_orange_light
-                    else -> android.R.color.holo_orange_dark
-                }))
+            view.text = temperature.toString()
+            view.setTextColor(color(
+                    when (temperature) {
+                        in -50..0 -> android.R.color.holo_blue_dark
+                        in 0..10 -> android.R.color.holo_blue_bright
+                        in 10..25 -> android.R.color.holo_orange_light
+                        else -> android.R.color.holo_orange_dark
+                    }))
     }
 
 }

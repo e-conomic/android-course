@@ -1,8 +1,6 @@
 package com.e_conomic.weatherapp.data
 
-import android.util.Log
 import com.google.gson.Gson
-import com.e_conomic.weatherapp.data.ForecastResult
 import java.net.URL
 
 class ForecastRequest(val cityId: String) {

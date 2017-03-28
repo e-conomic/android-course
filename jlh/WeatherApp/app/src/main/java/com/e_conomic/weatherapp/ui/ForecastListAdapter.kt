@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import com.e_conomic.weatherapp.App
 import com.e_conomic.weatherapp.R
-import com.e_conomic.weatherapp.domain.mappers.ForecastDataMapper
 import com.e_conomic.weatherapp.domain.model.Forecast
 import com.e_conomic.weatherapp.domain.model.ForecastList
 import com.e_conomic.weatherapp.extensions.toDateString
