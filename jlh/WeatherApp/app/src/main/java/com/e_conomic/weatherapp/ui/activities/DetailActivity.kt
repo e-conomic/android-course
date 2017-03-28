@@ -26,12 +26,9 @@ class DetailActivity : AppCompatActivity(), ToolbarManager {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
-<<<<<<< HEAD
-        title = intent.getStringExtra(FORECAST_CITY_EXTRA_KEY)
-=======
         initToolbar()
         toolbarTitle = intent.getStringExtra(FORECAST_CITY_EXTRA_KEY)
->>>>>>> adac4e1... Added simple custom toolbar
+        enableHomeAsUp { onBackPressed() }
         bindForecast(intent.getSerializableExtra(FORECAST_EXTRA_KEY) as Forecast)
     }
 

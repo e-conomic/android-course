@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity(), ToolbarManager {
         initToolbar()
 
         forecastList.layoutManager = LinearLayoutManager(this)
-
+        attachToScroll(forecastList)
 
         doAsync {
             val forecastListResult = RequestForecastCommand(COPENHAGEN_ID).execute()
