@@ -22,8 +22,11 @@ class MainActivity : AppCompatActivity() {
         doAsync {
             val forecastListResult = RequestForecastCommand(COPENHAGEN_ID).execute()
             uiThread {
-                forecastList.adapter = ForecastListAdapter(forecastListResult) {
-                    forecast -> toast(forecast.date)
+                title = "Weather in ${forecastListResult.city}"
+                forecastList.adapter = ForecastListAdapter(forecastListResult) { forecast ->
+                    startActivity<DetailActivity>(
+                            DetailActivity.FORECAST_EXTRA_KEY to forecast,
+                            DetailActivity.FORECAST_CITY_EXTRA_KEY to forecastListResult.city)
                 }
             }
         }
