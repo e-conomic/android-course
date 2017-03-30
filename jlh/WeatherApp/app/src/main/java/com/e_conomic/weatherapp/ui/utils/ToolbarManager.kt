@@ -40,6 +40,9 @@ interface ToolbarManager {
         progress = 1f
     }
 
+    /**
+     * Hides the toolbar on down scroll and shows the toolbar on up scroll.
+     */
     fun attachToScroll(recyclerView: RecyclerView) {
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {

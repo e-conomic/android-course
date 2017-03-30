@@ -4,6 +4,9 @@ import android.content.Context
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
+/**
+ * Delegate used to store and retrieve values in Shared Preferences.
+ */
 class Preference<T: Any>(val context: Context, val name: String, val default: T)
     : ReadWriteProperty<Any?, T> {
 
