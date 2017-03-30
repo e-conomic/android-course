@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
 import com.e_conomic.weatherapp.R
 import com.e_conomic.weatherapp.domain.commands.RequestForecastCommand
+import com.e_conomic.weatherapp.extensions.Preference
 import com.e_conomic.weatherapp.ui.ForecastListAdapter
 import com.e_conomic.weatherapp.ui.utils.ToolbarManager
 import kotlinx.android.synthetic.main.activity_main.*
@@ -15,7 +16,7 @@ class MainActivity : AppCompatActivity(), ToolbarManager {
 
     override val toolbar by lazy {find<Toolbar>(R.id.toolbar)}
 
-    val COPENHAGEN_ID = "2618425"
+    val cityId: Long by Preference(this, SettingsActivity.CITY_ID, SettingsActivity.DEFAULT_ID)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,17 +25,23 @@ class MainActivity : AppCompatActivity(), ToolbarManager {
 
         forecastList.layoutManager = LinearLayoutManager(this)
         attachToScroll(forecastList)
-
-        doAsync {
-            val forecastListResult = RequestForecastCommand(COPENHAGEN_ID).execute()
-            uiThread {
-                forecastList.adapter = ForecastListAdapter(forecastListResult) { forecast ->
-                    startActivity<DetailActivity>(
-                            DetailActivity.FORECAST_EXTRA_KEY to forecast,
-                            DetailActivity.FORECAST_CITY_EXTRA_KEY to forecastListResult.city)
-                }
-                toolbarTitle = "${forecastListResult.city} (${forecastListResult.country})"
-            }
-        }
     }
+
+    override fun onResume() {
+        super.onResume()
+        loadForecast()
+    }
+
+    private fun loadForecast() =
+            doAsync {
+                val forecastListResult = RequestForecastCommand(cityId).execute()
+                uiThread {
+                    forecastList.adapter = ForecastListAdapter(forecastListResult) { forecast ->
+                        startActivity<DetailActivity>(
+                                DetailActivity.FORECAST_EXTRA_KEY to forecast,
+                                DetailActivity.FORECAST_CITY_EXTRA_KEY to forecastListResult.city)
+                    }
+                    toolbarTitle = "${forecastListResult.city} (${forecastListResult.country})"
+                }
+            }
 }

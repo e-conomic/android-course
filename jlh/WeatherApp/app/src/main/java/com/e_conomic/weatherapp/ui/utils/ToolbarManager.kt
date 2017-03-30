@@ -7,6 +7,8 @@ import com.e_conomic.weatherapp.App
 import com.e_conomic.weatherapp.R
 import com.e_conomic.weatherapp.extensions.slideEnter
 import com.e_conomic.weatherapp.extensions.slideExit
+import com.e_conomic.weatherapp.ui.activities.SettingsActivity
+import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 
 interface ToolbarManager {
@@ -22,7 +24,7 @@ interface ToolbarManager {
         toolbar.inflateMenu(R.menu.menu_main)
         toolbar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.action_settings -> App.instance.toast("Settings")
+                R.id.action_settings -> toolbar.context.startActivity<SettingsActivity>()
                 else -> App.instance.toast("Unknown option")
             }
             true
