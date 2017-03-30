@@ -32,13 +32,8 @@ class ForecastListAdapter(val weekForecast: ForecastList, val itemClick: (Foreca
         fun bindForecast(forecast: Forecast) {
             with(forecast) {
 
-                if (iconUrl == null) {
-                    // Default icon
-                    itemView.icon.setImageResource(R.mipmap.ic_launcher)
-                } else {
-                    Picasso.with(itemView.context).load(iconUrl).into(itemView.icon)
-                }
-
+                iconUrl?.let{Picasso.with(itemView.context).load(iconUrl).into(itemView.icon)} ?:
+                        itemView.icon.setImageResource(R.mipmap.ic_launcher)
                 itemView.date.text = date.toDateString()
                 itemView.description.text = description ?:
                         App.instance.resources.getString(R.string.default_weather_description)

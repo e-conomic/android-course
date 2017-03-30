@@ -32,7 +32,7 @@ class DetailActivity : AppCompatActivity(), ToolbarManager {
         bindForecast(intent.getSerializableExtra(FORECAST_EXTRA_KEY) as Forecast)
     }
 
-    private fun bindForecast(forecast: Forecast): Unit {
+    private fun bindForecast(forecast: Forecast) {
         with (forecast) {
             Picasso.with(applicationContext).load(iconUrl).into(icon)
             supportActionBar?.subtitle = date.toDateString(DateFormat.FULL)
