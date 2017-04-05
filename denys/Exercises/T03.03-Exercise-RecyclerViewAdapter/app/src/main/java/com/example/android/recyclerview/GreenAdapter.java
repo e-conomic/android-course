@@ -53,7 +53,7 @@ public class GreenAdapter extends RecyclerView.Adapter<GreenAdapter.NumberViewHo
     public NumberViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
         int layoutID = R.layout.number_list_item;
-        LayoutInflater inflater = LayoutInflater.from(context);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         boolean shouldAttachToParent = false;
 
         View view = inflater.inflate(layoutID, parent, shouldAttachToParent);
