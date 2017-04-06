@@ -1,5 +1,7 @@
 package com.e_conomic.weatherapp.ui.utils
 
+import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.graphics.drawable.DrawerArrowDrawable
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
@@ -11,14 +13,19 @@ import com.e_conomic.weatherapp.ui.activities.SettingsActivity
 import org.jetbrains.anko.startActivity
 import org.jetbrains.anko.toast
 
-interface ToolbarManager {
-    val toolbar: Toolbar
+abstract class ToolbarAppCompatActivity : AppCompatActivity() {
+    abstract val toolbar: Toolbar
 
     var toolbarTitle: String
         get() = toolbar.title.toString()
         set(value) {
             toolbar.title = value
         }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        initToolbar()
+    }
 
     fun initToolbar() {
         toolbar.inflateMenu(R.menu.menu_main)
