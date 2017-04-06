@@ -217,7 +217,6 @@ public class MainActivity extends AppCompatActivity {
             if (weatherData != null) {
                 showWeatherDataView();
                 // TODO (45) Instead of iterating through every string, use mForecastAdapter.setWeatherData and pass in the weather data
-                mForecastAdapter = new ForecastAdapter();
                 mForecastAdapter.setWeatherData(weatherData);
                 mRecyclerView.setAdapter(mForecastAdapter);
             } else {
@@ -242,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.action_refresh) {
             // TODO (46) Instead of setting the text to "", set the adapter to null before refreshing
-            mForecastAdapter = null;
+            mForecastAdapter.setWeatherData(null);
             loadWeatherData();
             return true;
         }
