@@ -33,7 +33,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
     // TODO (1) Add an interface called ForecastAdapterOnClickHandler
     // TODO (2) Within that interface, define a void method that access a String as a parameter
     interface ForecastAdapterOnClickHandler {
-        void  weather(String weather);
+        void  onClickHandler(String weather);
     }
 
     // TODO (3) Create a final private ForecastAdapterOnClickHandler called mClickHandler
@@ -62,7 +62,7 @@ public class ForecastAdapter extends RecyclerView.Adapter<ForecastAdapter.Foreca
         @Override
         public void onClick(View v) {
             int index = getAdapterPosition();
-            mClickHandler.weather(mWeatherData[index]);
+            mClickHandler.onClickHandler(mWeatherData[index]);
         }
     }
 

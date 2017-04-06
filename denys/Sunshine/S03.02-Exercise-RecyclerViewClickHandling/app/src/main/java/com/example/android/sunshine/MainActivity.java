@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements ForecastAdapter.F
     // TODO (9) Override ForecastAdapterOnClickHandler's onClick method
     // TODO (10) Show a Toast when an item is clicked, displaying that item's weather data
     @Override
-    public void weather(String weather) {
+    public void onClickHandler(String weather) {
         if (toast != null) {
             toast.cancel();
         }
