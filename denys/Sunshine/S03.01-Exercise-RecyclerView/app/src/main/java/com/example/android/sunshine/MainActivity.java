@@ -217,7 +217,9 @@ public class MainActivity extends AppCompatActivity {
             if (weatherData != null) {
                 showWeatherDataView();
                 // TODO (45) Instead of iterating through every string, use mForecastAdapter.setWeatherData and pass in the weather data
+                mForecastAdapter = new ForecastAdapter();
                 mForecastAdapter.setWeatherData(weatherData);
+                mRecyclerView.setAdapter(mForecastAdapter);
             } else {
                 showErrorMessage();
             }
