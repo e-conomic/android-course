@@ -123,7 +123,7 @@ public class GreenAdapter extends RecyclerView.Adapter<GreenAdapter.NumberViewHo
     public class NumberViewHolder extends RecyclerView.ViewHolder {
 
         // TODO (13) Within NumberViewHolder, create a TextView variable called listItemNumberView
-        TextView listItemNumberView;
+        private TextView listItemNumberView;
 
         // TODO (14) Create a constructor for NumberViewHolder that accepts a View called itemView as a parameter
         public NumberViewHolder(View itemView) {
