@@ -14,11 +14,11 @@ import org.jetbrains.anko.*
 class MainActivity : ToolbarAppCompatActivity() {
 
     override val toolbar by lazy {find<Toolbar>(R.id.toolbar)}
+    override val layoutId = R.layout.activity_main
 
     val cityId: Long by Preference(this, SettingsActivity.CITY_ID, SettingsActivity.DEFAULT_ID)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setContentView(R.layout.activity_main)
         super.onCreate(savedInstanceState)
         forecastList.layoutManager = LinearLayoutManager(this)
         attachToScroll(forecastList)

@@ -17,6 +17,7 @@ import java.text.DateFormat
 class DetailActivity : ToolbarAppCompatActivity() {
 
     override val toolbar by lazy {find<Toolbar>(R.id.toolbar)}
+    override val layoutId = R.layout.activity_detail
 
     val DETAIL_ACTIVITY_TAG = "DetailActivity"
 
@@ -26,7 +27,6 @@ class DetailActivity : ToolbarAppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setContentView(R.layout.activity_detail)
         super.onCreate(savedInstanceState)
         toolbarTitle = intent.getStringExtra(FORECAST_CITY_EXTRA_KEY)
         enableHomeAsUp { onBackPressed() }

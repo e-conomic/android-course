@@ -15,6 +15,7 @@ import org.jetbrains.anko.toast
 
 abstract class ToolbarAppCompatActivity : AppCompatActivity() {
     abstract val toolbar: Toolbar
+    abstract val layoutId: Int
 
     var toolbarTitle: String
         get() = toolbar.title.toString()
@@ -24,6 +25,7 @@ abstract class ToolbarAppCompatActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(layoutId)
         initToolbar()
     }
 
