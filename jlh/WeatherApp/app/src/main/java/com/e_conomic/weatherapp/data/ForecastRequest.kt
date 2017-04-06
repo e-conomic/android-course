@@ -3,7 +3,7 @@ package com.e_conomic.weatherapp.data
 import com.google.gson.Gson
 import java.net.URL
 
-class ForecastRequest(val cityId: String) {
+class ForecastRequest(val cityId: Long) {
 
     // This object will be shared among all instances of this class.
     companion object {
@@ -14,7 +14,7 @@ class ForecastRequest(val cityId: String) {
     }
 
     fun execute(): ForecastResult {
-        val forecastJsonStr = URL(COMPLETE_URL + cityId).readText()
+        val forecastJsonStr = URL(COMPLETE_URL + cityId.toString()).readText()
         // Parse json to the ForecastResult class.
         return Gson().fromJson(forecastJsonStr, ForecastResult::class.java)
     }

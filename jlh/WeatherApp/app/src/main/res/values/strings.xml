@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">WeatherApp</string>
     <string name="default_weather_description">No description</string>
+    <string name="settings">Settings</string>
+    <string name="city_id">City id</string>
+    <string name="forecast_not_found">Forecast not found</string>
 </resources>
