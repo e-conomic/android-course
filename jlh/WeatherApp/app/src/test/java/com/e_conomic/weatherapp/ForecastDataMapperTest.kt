@@ -17,46 +17,46 @@ class ForecastDataMapperTest {
         `when`(request.execute()).thenReturn(
                 ForecastResult(
                         City(
-                                0L, //cityId
-                                "Copenhagen", //name
-                                Coordinates(0f, 0f),
-                                "Denmark", //country
-                                1 //population
+                                id = 0L,
+                                name = "Copenhagen",
+                                coord = Coordinates(0f, 0f),
+                                country = "Denmark",
+                                population = 1
                         ),
                         listOf(Forecast(
-                                123L, //date
-                                Temperature(
-                                        0f, //day
-                                        -5f, //min
-                                        10f, //max
-                                        0f, //night
-                                        0f, //eve
-                                        0f //morn
+                                dt = 123L,
+                                temp = Temperature(
+                                        day = 0f,
+                                        min = -5f,
+                                        max = 10f,
+                                        night = 0f,
+                                        eve = 0f,
+                                        morn = 0f
                                 ),
-                                0f, //pressure
-                                0, //humidity
-                                listOf(Weather(
-                                        0L, //id
-                                        "weatherMain",
-                                        "weatherDescription",
-                                        "weatherIcon"
+                                pressure = 0f,
+                                humidity = 0,
+                                weather = listOf(Weather(
+                                        id = 0L, //id
+                                        main = "weatherMain",
+                                        description = "weatherDescription",
+                                        icon = "weatherIcon"
                                 )),
-                                0f, //speed
-                                0, //degrees
-                                0, //clouds
-                                0f //rain
+                                speed = 0f,
+                                deg = 0,
+                                clouds = 0,
+                                rain = 0f
                         )))
         )
 
         val expectedResult = ForecastList(
-                "Copenhagen",
-                "Denmark",
-                listOf(modelForecast(
-                        123L, //date
-                        "weatherDescription",
-                        10, //high
-                        -5, //low
-                        "http://openweathermap.org/img/w/weatherIcon.png"
+                city = "Copenhagen",
+                country = "Denmark",
+                dailyForecast = listOf(modelForecast(
+                        date = 123L,
+                        description = "weatherDescription",
+                        high = 10,
+                        low = -5,
+                        iconUrl = "http://openweathermap.org/img/w/weatherIcon.png"
                 ))
         )
 
