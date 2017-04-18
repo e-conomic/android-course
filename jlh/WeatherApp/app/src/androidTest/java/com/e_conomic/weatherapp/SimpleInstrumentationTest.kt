@@ -19,12 +19,14 @@ import org.hamcrest.Matchers.`is`
 
 import org.junit.Rule
 import org.junit.Test
+import java.lang.Thread.sleep
 
 class SimpleInstrumentationTest {
 
     @get:Rule val activityRule = ActivityTestRule(MainActivity::class.java)
 
     @Test fun itemClick_navigatesToDetail() {
+        sleep(2000)
         onView(withId(R.id.forecastList)).perform(
                 RecyclerViewActions.actionOnItemAtPosition<RecyclerView.ViewHolder>(0, click())
         )
